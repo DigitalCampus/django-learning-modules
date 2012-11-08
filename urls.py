@@ -7,7 +7,7 @@ v1_api = Api(api_name='v1')
 
 urlpatterns = patterns('',
 
-    url(r'^$', 'mquiz.views.home_view', name="mquiz_home"),
+    url(r'^$', 'learning_modules.views.home_view', name="modules_home"),
     (r'^api/', include(v1_api.urls)),
 
     
