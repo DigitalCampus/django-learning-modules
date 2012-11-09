@@ -32,3 +32,14 @@ class Activity(models.Model):
     
     def __unicode__(self):
         return self.title
+    
+class Tracker(models.Model):
+    user = models.ForeignKey(User)
+    submitted_date = models.DateTimeField('date submitted',default=datetime.now)
+    tracker_date = models.DateTimeField('date tracked',default=datetime.now)
+    # TODO - make default of current user?
+    ip = models.IPAddressField()
+    # TODO - get user agent
+    agent = models.TextField(blank=True)
+    digest = models.CharField(max_length=100)
+    data = models.TextField(blank=True)
