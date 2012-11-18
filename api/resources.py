@@ -9,6 +9,7 @@ from tastypie.exceptions import NotFound, BadRequest, InvalidFilterError, Hydrat
 from learning_modules.models import Tracker
 from learning_modules.api.serializers import PrettyJSONSerializer
 from tastypie.validation import Validation
+from django.http import HttpRequest
 
 class UserResource(ModelResource):
     class Meta:
@@ -31,5 +32,6 @@ class TrackerResource(ModelResource):
         
     def hydrate(self, bundle, request=None):
         bundle.obj.user = User.objects.get(pk = bundle.request.user.id)
-        bundle.obj.ip = "127.0.0.1"
+        bundle.obj.ip = bundle.request.get_host()
+        bundle.obj.agent = bundle.request.META['HTTP_USER_AGENT']
         return bundle 
