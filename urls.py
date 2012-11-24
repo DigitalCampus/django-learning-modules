@@ -1,11 +1,12 @@
 # learning_modules/urls.py
 from django.conf.urls.defaults import patterns, include, url
 from django.views.generic.simple import direct_to_template
-from learning_modules.api.resources import TrackerResource
+from learning_modules.api.resources import TrackerResource, ModuleResource
 
 from tastypie.api import Api
 v1_api = Api(api_name='v1')
 v1_api.register(TrackerResource())
+v1_api.register(ModuleResource())
 
 urlpatterns = patterns('',
 
