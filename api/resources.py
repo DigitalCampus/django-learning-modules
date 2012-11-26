@@ -1,5 +1,6 @@
 # mquiz_api/resources.py
 from django.contrib.auth.models import User
+from django.core import serializers
 from tastypie import fields, bundle
 from tastypie.resources import ModelResource
 from tastypie.authentication import ApiKeyAuthentication
@@ -15,7 +16,7 @@ from tastypie.utils import trailing_slash
 from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 import os
-from django.conf import settings
+import json
 
 class UserResource(ModelResource):
     class Meta:
@@ -71,5 +72,12 @@ class ModuleResource(ModelResource):
     
     def dehydrate(self, bundle):
         # Include full download url
-        bundle.data['url'] = settings.SITE_URL + bundle.data['resource_uri'] + 'download/'
+        #bundle.data['url'] = settings.SITE_URL + bundle.data['resource_uri'] + 'download/'
+        if bundle.request.is_secure():
+            prefix = 'https://'
+        else:
+            prefix = 'http://'
+        bundle.data['url'] = prefix + bundle.request.META['SERVER_NAME'] + bundle.data['resource_uri'] + 'download/'
+        # make sure title is shown as json object (not string representation of one)
+        bundle.data['title'] = json.loads(bundle.data['title'])
         return bundle
