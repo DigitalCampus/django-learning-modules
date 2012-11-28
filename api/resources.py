@@ -36,9 +36,11 @@ class TrackerResource(ModelResource):
         always_return_data = True
         
     def hydrate(self, bundle, request=None):
+        # remove any id if this is submitted - otherwise it may overwrite existing tracker item
+        del bundle.data['id']
         bundle.obj.user = User.objects.get(pk = bundle.request.user.id)
         bundle.obj.ip = bundle.request.get_host()
-        bundle.obj.agent = bundle.request.META['HTTP_USER_AGENT']
+        bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
         return bundle 
     
 class ModuleResource(ModelResource):
