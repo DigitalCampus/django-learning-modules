@@ -36,6 +36,15 @@ class Activity(models.Model):
     
     def __unicode__(self):
         return self.title
+
+class Media(models.Model):
+    module = models.ForeignKey(Module)
+    digest = models.CharField(max_length=100)
+    filename = models.CharField(max_length=200)
+    download_url = models.URLField()
+    
+    def __unicode__(self):
+        return self.filename
     
 class Tracker(models.Model):
     user = models.ForeignKey(User)
