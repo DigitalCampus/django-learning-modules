@@ -40,7 +40,7 @@ class TrackerResource(ModelResource):
         if 'id' in bundle.data:
             del bundle.data['id']
         bundle.obj.user = User.objects.get(pk = bundle.request.user.id)
-        bundle.obj.ip = bundle.request.get_host()
+        bundle.obj.ip = bundle.request.META.get('REMOTE_ADDR','0.0.0.0')
         bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
         return bundle 
     
