@@ -5,15 +5,15 @@ from django.contrib.auth import (authenticate, logout, views)
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from mquiz.models import Quiz
+from learning_modules.models import Module
 from forms import UploadModuleForm
 from uploader import handle_uploaded_file
 import os
 import shutil
 
 def home_view(request):
-    latest_quiz_list = Quiz.objects.filter(draft=0).order_by('-created_date')[:10]
-    return render_to_response('learning_modules/home.html',{'latest_quiz_list': latest_quiz_list}, context_instance=RequestContext(request))
+    module_list = Module.objects.all().order_by('-created_date')
+    return render_to_response('learning_modules/home.html',{'module_list': module_list}, context_instance=RequestContext(request))
 
 def upload(request):
     if request.method == 'POST': # if form submitted...

@@ -75,6 +75,7 @@ def handle_uploaded_file(f, extract_path, request):
     # add all the sections
     for structure in doc.getElementsByTagName("structure")[:1]:
         for s in structure.getElementsByTagName("section"):
+            temp_title = {}
             for t in s.childNodes:
                 if t.nodeName == 'title':
                     temp_title[t.getAttribute('lang')] = t.firstChild.nodeValue
@@ -88,6 +89,7 @@ def handle_uploaded_file(f, extract_path, request):
             # add all the activities
             for activities in s.getElementsByTagName("activities")[:1]:
                 for a in activities.getElementsByTagName("activity"):
+                    temp_title = {}
                     for t in a.getElementsByTagName("title"):
                         temp_title[t.getAttribute('lang')] = t.firstChild.nodeValue
                     title = json.dumps(temp_title)
