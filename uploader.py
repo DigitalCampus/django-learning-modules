@@ -5,6 +5,7 @@ import zipfile
 import os
 import xml.dom.minidom
 import json
+from datetime import datetime
 from xml.dom.minidom import Node
 from learning_modules.models import Module, Section, Activity, Media
 
@@ -59,18 +60,27 @@ def handle_uploaded_file(f, extract_path, request):
         if module.version > versionid:
             messages.info(request,"A newer version of this module already exists")
             return False
-        # wipe out the old one - do this so it removes all the related sections/activitise etc
-        module.delete()
+        # wipe out the old sections/activities/media
+        oldsections = Section.objects.filter(module = module)
+        oldsections.delete()
+        oldmedia = Media.objects.filter(module = module)
+        oldmedia.delete()
+        
+        module.shortname = shortname
+        module.title = title
+        module.version = versionid
+        module.user = request.user
+        module.filename = f.name
+        module.lastupdated_date = datetime.now()
+        module.save()
     except Module.DoesNotExist:
-        pass
-    
-    module = Module()
-    module.shortname = shortname
-    module.title = title
-    module.version = versionid
-    module.user = request.user
-    module.filename = f.name
-    module.save()
+        module = Module()
+        module.shortname = shortname
+        module.title = title
+        module.version = versionid
+        module.user = request.user
+        module.filename = f.name
+        module.save()
         
     # add all the sections
     for structure in doc.getElementsByTagName("structure")[:1]:
