@@ -53,9 +53,14 @@ def handle_uploaded_file(f, extract_path, request):
             shortname = sn.firstChild.nodeValue
     
     # Find if module already exists
-    try:
-        # TODO... check that the current user is allowed to wipe out the other module
+    try: 
         module = Module.objects.get(shortname = shortname)
+        
+        # check that the current user is allowed to wipe out the other module
+        if module.user != request.user:
+            messages.info(request,"Sorry, only the original owner may update this module")
+            return False
+        
         # check if module version is older
         if module.version > versionid:
             messages.info(request,"A newer version of this module already exists")
