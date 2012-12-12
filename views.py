@@ -11,8 +11,9 @@ from uploader import handle_uploaded_file
 import os
 import shutil
 
+
 def home_view(request):
-    module_list = Module.objects.all().order_by('-created_date')
+    module_list = Module.objects.all().order_by('title')
     return render_to_response('learning_modules/home.html',{'module_list': module_list}, context_instance=RequestContext(request))
 
 def upload(request):
