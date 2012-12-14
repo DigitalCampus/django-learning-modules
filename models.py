@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
+from badges.receivers import tracker_callback
 
 class Module(models.Model):
     user = models.ForeignKey(User)
@@ -54,3 +55,16 @@ class Tracker(models.Model):
     agent = models.TextField(blank=True)
     digest = models.CharField(max_length=100)
     data = models.TextField(blank=True)
+    
+    def is_first_tracker_today(self,user):
+        date = datetime.now()
+        day = date.strftime("%d")
+        month = date.strftime("%m")
+        year = date.strftime("%y")
+        no_attempts_today = Tracker.objects.filter(user=user,digest=self.digest,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).count()
+        if no_attempts_today == 1:
+            return True
+        else:
+            return False
+    
+models.signals.post_save.connect(tracker_callback, sender=Tracker)
