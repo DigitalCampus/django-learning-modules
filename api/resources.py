@@ -38,7 +38,7 @@ class TrackerResource(ModelResource):
         authorization = Authorization() 
         serializer = PrettyJSONSerializer()
         always_return_data =  True
-        fields = ['points']
+        fields = ['points','digest','data','tracker_date']
         
     def hydrate(self, bundle, request=None):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
