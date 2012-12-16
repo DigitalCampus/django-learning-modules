@@ -41,6 +41,18 @@ class Section(models.Model):
     def __unicode__(self):
         return self.title
     
+    def get_title(self,lang='en'):
+        try:
+            titles = json.loads(self.title)
+            if lang in titles:
+                return titles[lang]
+            else:
+                for l in titles:
+                    return titles[l]
+        except:
+            pass
+        return self.title
+    
 class Activity(models.Model):
     section = models.ForeignKey(Section)
     order = models.IntegerField()
@@ -51,6 +63,18 @@ class Activity(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_title(self,lang='en'):
+        try:
+            titles = json.loads(self.title)
+            if lang in titles:
+                return titles[lang]
+            else:
+                for l in titles:
+                    return titles[l]
+        except:
+            pass
+        return self.title
+    
 class Media(models.Model):
     module = models.ForeignKey(Module)
     digest = models.CharField(max_length=100)
@@ -79,5 +103,23 @@ class Tracker(models.Model):
             return True
         else:
             return False
+    
+    def get_activity_type(self):
+        activities = Activity.objects.filter(digest=self.digest)
+        for a in activities:
+            return a.type
+        media = Media.objects.filter(digest=self.digest)
+        for m in media:
+            return "media"
+        return None
+        
+    def get_activity_title(self):
+        activities = Activity.objects.filter(digest=self.digest)
+        for a in activities:
+            return a.get_title() + " (" + a.section.module.get_title() + " / " + a.section.get_title() +")"
+        media = Media.objects.filter(digest=self.digest)
+        for m in media:
+            return m.filename + " (" + m.module.get_title()+")"
+        return "Not found"
     
 models.signals.post_save.connect(tracker_callback, sender=Tracker)
