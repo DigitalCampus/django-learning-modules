@@ -9,7 +9,7 @@
 {% if module_list %}
 <ul>
 	 {% for module in module_list %}
-	 <li>{{ module.title|get_title:LANGUAGE_CODE }}</li>
+	 <li>{{ module.title|title_lang:LANGUAGE_CODE }}</li>
 	 {% endfor %}
 </ul>
 {% endif %}

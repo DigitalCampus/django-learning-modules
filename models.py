@@ -3,7 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
-from badges.receivers import tracker_callback
+from badges.tasks import tracker_callback
+import json
 
 class Module(models.Model):
     user = models.ForeignKey(User)
@@ -19,7 +20,19 @@ class Module(models.Model):
     
     def getAbsPath(self):
         return settings.MODULE_UPLOAD_DIR + self.filename
-        
+    
+    def get_title(self,lang='en'):
+        try:
+            titles = json.loads(self.title)
+            if lang in titles:
+                return titles[lang]
+            else:
+                for l in titles:
+                    return titles[l]
+        except:
+            pass
+        return self.title 
+     
 class Section(models.Model):
     module = models.ForeignKey(Module)
     order = models.IntegerField()

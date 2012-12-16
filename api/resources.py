@@ -18,6 +18,7 @@ from django.core.servers.basehttp import FileWrapper
 import os
 import json
 from badges.models import Points
+from learning_modules.signals import module_downloaded
 
 class UserResource(ModelResource):
     class Meta:
@@ -79,6 +80,8 @@ class ModuleResource(ModelResource):
         response = HttpResponse(wrapper, content_type='application/zip') #or whatever type you want there
         response['Content-Length'] = os.path.getsize(module.getAbsPath())
         response['Content-Disposition'] = 'attachment; filename="%s"' %(module.filename)
+        module_downloaded.send(sender=self, module=module, user=request.user)
+        
         return response
     
     def dehydrate(self, bundle):

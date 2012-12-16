@@ -5,9 +5,9 @@ from django import template
 
 register = template.Library()
 
-@register.filter(name='get_title')
+@register.filter(name='title_lang')
 @stringfilter
-def get_title(title,lang):
+def title_lang(title,lang):
     try:
         titles = json.loads(title)
         if lang in titles:
