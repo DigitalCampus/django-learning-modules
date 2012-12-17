@@ -7,7 +7,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import NotFound, BadRequest, InvalidFilterError, HydrationError, InvalidSortError, ImmediateHttpResponse
-from learning_modules.models import Tracker, Module
+from learning_modules.models import Tracker, Module, ModuleDownload
 from learning_modules.api.serializers import PrettyJSONSerializer, ModuleJSONSerializer
 from tastypie.validation import Validation
 from django.http import HttpRequest
@@ -80,6 +80,12 @@ class ModuleResource(ModelResource):
         response = HttpResponse(wrapper, content_type='application/zip') #or whatever type you want there
         response['Content-Length'] = os.path.getsize(module.getAbsPath())
         response['Content-Disposition'] = 'attachment; filename="%s"' %(module.filename)
+        
+        md = ModuleDownload()
+        md.user = request.user
+        md.module = module
+        md.save()
+        
         module_downloaded.send(sender=self, module=module, user=request.user)
         
         return response
