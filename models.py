@@ -33,6 +33,13 @@ class Module(models.Model):
             pass
         return self.title 
      
+    def is_first_download(self,user):
+        no_attempts = ModuleDownload.objects.filter(user=user,module=self).count()
+        is_first_download = False
+        if no_attempts == 1:
+            is_first_download = True
+        return is_first_download
+    
 class Section(models.Model):
     module = models.ForeignKey(Module)
     order = models.IntegerField()
@@ -126,12 +133,5 @@ class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
     module = models.ForeignKey(Module)
     download_date = models.DateTimeField('date downloaded',default=datetime.now)
-    
-    def is_first_download(self,user):
-        no_attempts = ModuleDownload.objects.filter(user=user,module=self.module).count()
-        is_first_download = False
-        if no_attempts == 1:
-            is_first_download = True
-        return is_first_download
     
 models.signals.post_save.connect(tracker_callback, sender=Tracker)
