@@ -3,8 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
-from badges.tasks import tracker_callback
 import json
+from badges.signals import tracker_callback
 
 class Module(models.Model):
     user = models.ForeignKey(User)
