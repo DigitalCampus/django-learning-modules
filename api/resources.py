@@ -17,7 +17,7 @@ from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 import os
 import json
-from badges.models import Points
+from badges.models import Points, Award
 from learning_modules.signals import module_downloaded
 
 class UserResource(ModelResource):
@@ -29,6 +29,7 @@ class UserResource(ModelResource):
 class TrackerResource(ModelResource):
     user = fields.ForeignKey(UserResource, 'user')
     points = fields.IntegerField(readonly=True)
+    badges = fields.IntegerField(readonly=True)
     
     class Meta:
         queryset = Tracker.objects.all()
@@ -38,7 +39,7 @@ class TrackerResource(ModelResource):
         authorization = Authorization() 
         serializer = PrettyJSONSerializer()
         always_return_data =  True
-        fields = ['points','digest','data','tracker_date']
+        fields = ['points','digest','data','tracker_date','badges']
         
     def hydrate(self, bundle, request=None):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
@@ -52,6 +53,10 @@ class TrackerResource(ModelResource):
     def dehydrate_points(self,bundle):
         points = Points.get_userscore(bundle.request.user)
         return points
+    
+    def dehydrate_badges(self,bundle):
+        badges = Award.get_userawards(bundle.request.user)
+        return badges
     
 class ModuleResource(ModelResource):
     class Meta:
