@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
 import json
-from badges.signals import tracker_callback
 
 class Module(models.Model):
     user = models.ForeignKey(User)
@@ -16,7 +15,7 @@ class Module(models.Model):
     filename = models.CharField(max_length=200)
    
     def __unicode__(self):
-        return self.title
+        return self.get_title()
     
     def getAbsPath(self):
         return settings.MODULE_UPLOAD_DIR + self.filename
@@ -46,7 +45,7 @@ class Section(models.Model):
     title = models.TextField(blank=False)
     
     def __unicode__(self):
-        return self.title
+        return self.get_title()
     
     def get_title(self,lang='en'):
         try:
@@ -68,7 +67,7 @@ class Activity(models.Model):
     digest = models.CharField(max_length=100)
     
     def __unicode__(self):
-        return self.title
+        return self.get_title()
 
     def get_title(self,lang='en'):
         try:
@@ -99,6 +98,9 @@ class Tracker(models.Model):
     agent = models.TextField(blank=True)
     digest = models.CharField(max_length=100)
     data = models.TextField(blank=True)
+    
+    def __unicode__(self):
+        return self.agent
     
     def is_first_tracker_today(self,user):
         date = datetime.now()
@@ -134,4 +136,3 @@ class ModuleDownload(models.Model):
     module = models.ForeignKey(Module)
     download_date = models.DateTimeField('date downloaded',default=datetime.now)
     
-models.signals.post_save.connect(tracker_callback, sender=Tracker)
