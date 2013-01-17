@@ -97,7 +97,6 @@ class ModuleResource(ModelResource):
     
     def dehydrate(self, bundle):
         # Include full download url
-        #bundle.data['url'] = settings.SITE_URL + bundle.data['resource_uri'] + 'download/'
         if bundle.request.is_secure():
             prefix = 'https://'
         else:
