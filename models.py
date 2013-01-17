@@ -13,6 +13,7 @@ class Module(models.Model):
     title = models.TextField(blank=False)
     shortname = models.CharField(max_length=20)
     filename = models.CharField(max_length=200)
+    badge_icon = models.FileField(upload_to="badges")
    
     def __unicode__(self):
         return self.get_title()
