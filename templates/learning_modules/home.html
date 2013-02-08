@@ -9,7 +9,7 @@
 {% if module_list %}
 <ul>
 	 {% for module in module_list %}
-	 <li>{{ module.title|title_lang:LANGUAGE_CODE }}</li>
+	 <li><a href="{% url module_recent_activity module.id %}">{{ module.title|title_lang:LANGUAGE_CODE }}</a></li>
 	 {% endfor %}
 </ul>
 {% endif %}

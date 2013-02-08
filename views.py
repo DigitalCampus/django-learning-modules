@@ -5,11 +5,12 @@ from django.contrib.auth import (authenticate, logout, views)
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from learning_modules.models import Module
+from learning_modules.models import Module, Section, Activity, Tracker
 from forms import UploadModuleForm
 from uploader import handle_uploaded_file
 import os
 import shutil
+import datetime
 
 
 def home_view(request):
@@ -31,3 +32,17 @@ def upload(request):
         form = UploadModuleForm() # An unbound form
 
     return render(request, 'learning_modules/upload.html', {'form': form,})
+
+def recent_activity(request,id):
+    module = Module.objects.get(pk=id)
+    digests = Activity.objects.filter(section_id__in= Section.objects.filter(module_id=id)).values_list('digest',flat=True)
+    dates = []
+    startdate = datetime.datetime.now()
+    for i in range(31,-1,-1):
+        temp = startdate - datetime.timedelta(days=i)
+        day = temp.strftime("%d")
+        month = temp.strftime("%m")
+        year = temp.strftime("%y")
+        count = Tracker.objects.filter(digest__in=digests,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).count()
+        dates.append([temp.strftime("%d %b %y"),count])
+    return render_to_response('learning_modules/module-activity.html',{'module': module,'data':dates}, context_instance=RequestContext(request))

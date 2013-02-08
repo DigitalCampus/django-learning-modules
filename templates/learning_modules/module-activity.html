@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load title_lang %}
+{% block extra_scripts %}
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<script type="text/javascript">
+
+	// Load the Visualization API and the piechart package.
+	google.load('visualization', '1.0', {'packages':['corechart']});
+
+	// Set a callback to run when the Google Visualization API is loaded.
+	google.setOnLoadCallback(drawChart);
+	function drawChart() {
+
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Date');
+		data.addColumn('number', 'Total');
+		data.addRows( {{ data|length }} );
+		
+		{% for date,count in data %}
+			data.setValue({{ forloop.counter0 }},0,'{{ date }}');
+			data.setValue({{ forloop.counter0 }},1,{{ count }});
+		{% endfor %}
+
+        var chart = new google.visualization.LineChart(document.getElementById('attempts_chart_div'));
+        chart.draw(data, {	width: 800, 
+                			height: 400,
+                			vAxis: {title: 'No attempts'},
+                			pointSize:5,
+                			chartArea:{left:50,top:50,width:"80%",height:"75%"},
+                			backgroundColor: 'transparent'
+							});
+      }
+</script>
+{% endblock extra_scripts %}
+{% block content %}
+
+<h2>{{ module.title|title_lang:LANGUAGE_CODE }}</h2>
+
+<div id="attempts_chart_div" class="graph">{% trans 'graph_generating'%}</div>
+
+{% endblock %}

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^$', 'learning_modules.views.home_view', name="modules_home"),
     url(r'^upload/$', 'learning_modules.views.upload', name="modules_upload"),
     url(r'^upload/success/$', direct_to_template, {"template": "learning_modules/upload-success.html",}, name="modules_upload_success"),
+    url(r'^(?P<id>\d+)/$', 'learning_modules.views.recent_activity', name="module_recent_activity"),
     (r'^api/', include(v1_api.urls)),
 
 )
