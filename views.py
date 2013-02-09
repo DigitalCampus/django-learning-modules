@@ -36,6 +36,7 @@ def upload(request):
 def recent_activity(request,id):
     module = Module.objects.get(pk=id)
     digests = Activity.objects.filter(section__in= Section.objects.filter(module=module)).values_list('digest',flat=True)
+    
     dates = []
     startdate = datetime.datetime.now()
     for i in range(31,-1,-1):
