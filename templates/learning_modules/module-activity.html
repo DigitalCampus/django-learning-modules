@@ -14,12 +14,18 @@
 
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Date');
+		data.addColumn('number', 'Page Completed');
+		data.addColumn('number', 'Quiz Completed');
+		data.addColumn('number', 'Media viewed');
 		data.addColumn('number', 'Total');
 		data.addRows( {{ data|length }} );
 		
-		{% for date,count in data %}
+		{% for date,count_ap,count_aq,count_m in data %}
 			data.setValue({{ forloop.counter0 }},0,'{{ date }}');
-			data.setValue({{ forloop.counter0 }},1,{{ count }});
+			data.setValue({{ forloop.counter0 }},1,{{ count_ap }});
+			data.setValue({{ forloop.counter0 }},2,{{ count_aq }});
+			data.setValue({{ forloop.counter0 }},3,{{ count_m }});
+			data.setValue({{ forloop.counter0 }},4,{{ count_ap|add:count_aq|add:count_m }});
 		{% endfor %}
 
         var chart = new google.visualization.LineChart(document.getElementById('attempts_chart_div'));
@@ -35,8 +41,12 @@
 {% endblock extra_scripts %}
 {% block content %}
 
-<h2>{{ module.title|title_lang:LANGUAGE_CODE }}</h2>
+<h2><a href="{% url modules_home %}">Modules</a> > {{ module.title|title_lang:LANGUAGE_CODE }}</h2>
 
+{% if user.is_staff or user == module.owner %}
+	 <a href="{% url module_recent_activity_detail module.id %}">Detail</a>
+{% endif %}
+	 
 <div id="attempts_chart_div" class="graph">{% trans 'graph_generating'%}</div>
 
 {% endblock %}

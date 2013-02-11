@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load title_lang %}
+
+{% block content %}
+
+<h2><a href="{% url modules_home %}">Modules</a> > {{ module.title|title_lang:LANGUAGE_CODE }}</h2>
+{% if page.object_list.count > 0 %}
+	{% include "mquiz/includes/page_navigator.html" %}
+    
+	<div class="quizlist">
+		<div class='quizcell'>{% trans 'table_header_tracker_date' %}</a></div>
+		<div class='quizcell'>{% trans 'table_header_tracker_user' %}</div>
+		<div class='quiztitle'>{% trans 'table_header_tracker_activity' %}</div>
+		<div class='quiztitle'>{% trans 'table_header_tracker_description' %}</div>
+		<div style='clear:both'></div>
+	</div>
+	{% for t in page.object_list %}
+		<div class="quizlist">
+			<div class='quizcell'>{{ t.submitted_date|date:"d M Y H:i" }}</a></div>
+			<div class='quizcell'>{{ t.user.first_name }} {{ t.user.last_name }}</div>
+			<div class='quiztitle'>{{ t.title }}</div>
+			<div class='quiztitle'>{{ t.data }}</div>
+			<div style='clear:both'></div>
+		</div>
+	{% endfor %}
+	
+	{% include "mquiz/includes/page_navigator.html" %}
+{% else %}
+	<p>No hits yet</p>
+{% endif %}
+{% endblock %}

@@ -123,10 +123,14 @@ class Tracker(models.Model):
             return "media"
         return None
         
-    def get_activity_title(self):
+    def get_activity_title(self, module_title = True):
         activities = Activity.objects.filter(digest=self.digest)
         for a in activities:
-            return a.get_title() + " (" + a.section.module.get_title() + " / " + a.section.get_title() +")"
+            title = a.get_title() + " (" 
+            if module_title:
+                title  = title + a.section.module.get_title() + " / "
+            title = title + a.section.get_title() +")"
+            return title
         media = Media.objects.filter(digest=self.digest)
         for m in media:
             return m.filename + " (" + m.module.get_title()+")"
