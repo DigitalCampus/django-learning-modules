@@ -70,11 +70,11 @@ class ModuleResource(ModelResource):
         always_return_data = True
         include_resource_uri = True
         
-    def override_urls(self):
+    def prepend_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/download%s$" % (self._meta.resource_name, trailing_slash()), self.wrap_view('download_detail'), name="api_download_detail"),
             ]
-        
+    
     def download_detail(self, request, **kwargs):
         self.is_authenticated(request)
         self.throttle_check(request)
@@ -105,3 +105,4 @@ class ModuleResource(ModelResource):
         # make sure title is shown as json object (not string representation of one)
         bundle.data['title'] = json.loads(bundle.data['title'])
         return bundle
+    
