@@ -1,16 +1,64 @@
-{% extends "base.html" %}
-{% load i18n %}
-{% load title_lang %}
+{% extends "base.html" %} 
+{% load i18n %} 
+{% load title_lang %} 
+{% block extra_scripts %}
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type="text/javascript">
 
+	// Load the Visualization API and the piechart package.
+	google.load('visualization', '1.0', {'packages':['corechart']});
+
+	// Set a callback to run when the Google Visualization API is loaded.
+	google.setOnLoadCallback(drawChart);
+	function drawChart() {
+
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Date');
+		data.addColumn('number', 'Total');
+		data.addRows( {{ recent_activity|length }} );
+		
+		{% for date,count in recent_activity %}
+			data.setValue({{ forloop.counter0 }},0,'{{ date }}');
+			data.setValue({{ forloop.counter0 }},1,{{ count }});
+
+		{% endfor %}
+
+        var chart = new google.visualization.LineChart(document.getElementById('activity_chart_div'));
+        chart.draw(data, {	width: 800, 
+                			height: 400,
+                			vAxis: {title: 'Activity'},
+                			pointSize:5,
+                			chartArea:{left:50,top:50,width:"80%",height:"75%"},
+                			backgroundColor: 'transparent'
+							});
+      }
+</script>
+{% endblock extra_scripts %} 
 {% block content %}
 <h2>{% trans 'page_title_modules' %}</h2>
 
-<a href="{% url modules_upload %}">{% trans 'upload_module' %}</a>
+{% blocktrans %} 
+<p>mQuiz learning modules are courses you can take on your
+smartphone, all the course activities, videos and quizzes can be used even when you have no internet connection on your mobile.</p> 
+<p>To get started with our learning modules, <a href="https://play.google.com/store/apps/details?id=org.digitalcampus.mobile.learning">download our smartphone app</a>. 
+Or <a href="https://www.youtube.com/watch?v=Q1ZoNd-WdmQ">watch a video</a> of our app in action.</p>
+{% endblocktrans %}
+
+<h3>{% trans 'modules_recent_activity' %}</h3>
+<div id="activity_chart_div" class="graph">{% trans 'graph_generating'%}</div>
+
+<h3>{% trans 'modules' %}</h3>
 {% if module_list %}
 <ul>
-	 {% for module in module_list %}
-	 <li><a href="{% url module_recent_activity module.id %}">{{ module.title|title_lang:LANGUAGE_CODE }}</a></li>
-	 {% endfor %}
+	{% for module in module_list %}
+	<li><a href="{% url module_recent_activity module.id %}">
+		{{ module.title|title_lang:LANGUAGE_CODE }}</a> ({{module.no_downloads}} downloads by {{module.no_distinct_downloads}} users)</li> {% endfor %}
 </ul>
 {% endif %}
+
+{% if user.is_authenticated %}
+	<h3>{% trans 'modules_upload' %}</h3>
+	<a href="{% url modules_upload %}">{% trans 'upload_module' %}</a>
+{% endif %}
+
 {% endblock %}

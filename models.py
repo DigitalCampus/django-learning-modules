@@ -40,6 +40,14 @@ class Module(models.Model):
             is_first_download = True
         return is_first_download
     
+    def no_downloads(self):
+        no_downloads = ModuleDownload.objects.filter(module=self).count()
+        return no_downloads
+    
+    def no_distinct_downloads(self):
+        no_distinct_downloads = ModuleDownload.objects.filter(module=self).values('user_id').distinct().count()
+        return no_distinct_downloads
+    
 class Section(models.Model):
     module = models.ForeignKey(Module)
     order = models.IntegerField()
