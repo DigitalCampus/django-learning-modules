@@ -148,4 +148,6 @@ class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
     module = models.ForeignKey(Module)
     download_date = models.DateTimeField('date downloaded',default=datetime.now)
+    module_version = models.BigIntegerField(default=0)
+    
     

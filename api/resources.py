@@ -89,6 +89,7 @@ class ModuleResource(ModelResource):
         md = ModuleDownload()
         md.user = request.user
         md.module = module
+        md.module_version = module.version
         md.save()
         
         module_downloaded.send(sender=self, module=module, user=request.user)
