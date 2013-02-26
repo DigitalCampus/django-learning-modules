@@ -151,4 +151,28 @@ class ModuleDownload(models.Model):
     download_date = models.DateTimeField('date downloaded',default=datetime.now)
     module_version = models.BigIntegerField(default=0)
     
+ 
+class Cohort(models.Model):
+    module = models.ForeignKey(Module)  
+    description = models.CharField(max_length=100)
+    start_date = models.DateTimeField(default=datetime.now)
+    end_date = models.DateTimeField(default=datetime.now)
+
+    def __unicode__(self):
+        return self.description
     
+class Participant(models.Model):
+    ROLE_TYPES = (
+        ('teacher', 'Teacher'),
+        ('student', 'Student'),
+    )
+    cohort = models.ForeignKey(Cohort)
+    user = models.ForeignKey(User)
+    role = models.CharField(max_length=20,choices=ROLE_TYPES)
+    
+class Message(models.Model):
+    module = models.ForeignKey(Module) 
+    author = models.ForeignKey(User)
+    message_date = models.DateTimeField(default=datetime.now)
+    message = models.CharField(max_length=200)
+    link = models.URLField(verify_exists=False,max_length=255)  
