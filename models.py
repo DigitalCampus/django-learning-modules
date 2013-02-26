@@ -107,6 +107,7 @@ class Tracker(models.Model):
     agent = models.TextField(blank=True)
     digest = models.CharField(max_length=100)
     data = models.TextField(blank=True)
+    module = models.ForeignKey(Module,null=True, blank=True, default=None)
     
     def __unicode__(self):
         return self.agent
