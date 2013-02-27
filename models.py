@@ -173,6 +173,8 @@ class Participant(models.Model):
 class Message(models.Model):
     module = models.ForeignKey(Module) 
     author = models.ForeignKey(User)
-    message_date = models.DateTimeField(default=datetime.now)
+    date_created = models.DateTimeField(default=datetime.now)
+    publish_date = models.DateTimeField(default=datetime.now)
     message = models.CharField(max_length=200)
     link = models.URLField(verify_exists=False,max_length=255)  
+    icon = models.CharField(max_length=200)
