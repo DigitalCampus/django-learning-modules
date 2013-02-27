@@ -7,7 +7,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import NotFound, BadRequest, InvalidFilterError, HydrationError, InvalidSortError, ImmediateHttpResponse
-from learning_modules.models import Tracker, Module, ModuleDownload
+from learning_modules.models import Activity, Section, Tracker, Module, ModuleDownload, Media
 from learning_modules.api.serializers import PrettyJSONSerializer, ModuleJSONSerializer
 from tastypie.validation import Validation
 from django.http import HttpRequest
@@ -39,7 +39,7 @@ class TrackerResource(ModelResource):
         authorization = Authorization() 
         serializer = PrettyJSONSerializer()
         always_return_data =  True
-        fields = ['points','digest','data','tracker_date','badges']
+        fields = ['points','digest','data','tracker_date','badges','module']
         
     def hydrate(self, bundle, request=None):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
@@ -48,6 +48,21 @@ class TrackerResource(ModelResource):
         bundle.obj.user = User.objects.get(pk = bundle.request.user.id)
         bundle.obj.ip = bundle.request.META.get('REMOTE_ADDR','0.0.0.0')
         bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
+        # find out the module & activity type from the digest
+        try:
+            activity = Activity.objects.get(digest=bundle.data['digest'])
+            bundle.obj.module = activity.section.module
+            bundle.obj.type = activity.type
+        except Activity.DoesNotExist:
+            pass
+        
+        try:
+            media = Media.objects.get(digest=bundle.data['digest'])
+            bundle.obj.module = media.module
+            bundle.obj.type = 'media'
+        except Media.DoesNotExist:
+            pass
+        
         return bundle 
     
     def dehydrate_points(self,bundle):
