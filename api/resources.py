@@ -50,6 +50,7 @@ class TrackerResource(ModelResource):
         bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
         # find out the module & activity type from the digest
         try:
+            bundle.obj.type = "page/quiz"
             activity = Activity.objects.get(digest=bundle.data['digest'])
             bundle.obj.module = activity.section.module
             bundle.obj.type = activity.type
@@ -57,6 +58,7 @@ class TrackerResource(ModelResource):
             pass
         
         try:
+            bundle.obj.type = "maybemedia"
             media = Media.objects.get(digest=bundle.data['digest'])
             bundle.obj.module = media.module
             bundle.obj.type = 'media'
