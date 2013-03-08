@@ -48,9 +48,6 @@ def upload(request):
 
 def recent_activity(request,id):
     module = Module.objects.get(pk=id)
-    quiz_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='quiz').values_list('digest',flat=True)
-    page_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='page').values_list('digest',flat=True)
-    media_digests = Media.objects.filter(module=module).values_list('digest',flat=True)
     dates = []
     startdate = datetime.datetime.now()
     staff = User.objects.filter(is_staff=True)
@@ -59,9 +56,9 @@ def recent_activity(request,id):
         day = temp.strftime("%d")
         month = temp.strftime("%m")
         year = temp.strftime("%y")
-        count_act_page = Tracker.objects.filter(digest__in=page_activity_digests,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
-        count_act_quiz = Tracker.objects.filter(digest__in=quiz_activity_digests,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
-        count_media = Tracker.objects.filter(digest__in=media_digests,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+        count_act_page = Tracker.objects.filter(module=module,type='page',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+        count_act_quiz = Tracker.objects.filter(module=module,type='quiz',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+        count_media = Tracker.objects.filter(module=module,type='media',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
         dates.append([temp.strftime("%d %b %y"),count_act_page,count_act_quiz,count_media])
     return render_to_response('learning_modules/module-activity.html',{'module': module,'data':dates}, context_instance=RequestContext(request))
 
@@ -76,11 +73,11 @@ def recent_activity_detail(request,id):
     except Module.DoesNotExist:
         raise Http404
         
-    quiz_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='quiz').values_list('digest',flat=True)
-    page_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='page').values_list('digest',flat=True)
-    media_digests = Media.objects.filter(module=module).values_list('digest',flat=True)
+    #quiz_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='quiz').values_list('digest',flat=True)
+    #page_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='page').values_list('digest',flat=True)
+    #media_digests = Media.objects.filter(module=module).values_list('digest',flat=True)
     staff = User.objects.filter(is_staff=True)
-    trackers = Tracker.objects.filter(Q(digest__in=quiz_activity_digests)|Q(digest__in=page_activity_digests)|Q(digest__in=media_digests)).exclude(user_id__in=staff).order_by('-submitted_date')
+    trackers = Tracker.objects.filter(module=module).exclude(user_id__in=staff).order_by('-submitted_date')
     paginator = Paginator(trackers, 25)
     # Make sure page request is an int. If not, deliver first page.
     try:
@@ -92,14 +89,7 @@ def recent_activity_detail(request,id):
     try:
         tracks = paginator.page(page)
         for t in tracks:
-            if t.digest in quiz_activity_digests:
-                t.title = "Quiz: " + t.get_activity_title(False)
-            elif t.digest in page_activity_digests:
-                t.title = "Page: " + t.get_activity_title(False)
-            elif t.digest in media_digests:
-                t.title = "Media: " + t.get_activity_title()
-            else:
-                t.title = "Unknown"
+            t.title = t.get_activity_title(False)
     except (EmptyPage, InvalidPage):
         tracks = paginator.page(paginator.num_pages)
     return render_to_response('learning_modules/module-activity-detail.html',{'module': module,'page':tracks,}, context_instance=RequestContext(request))

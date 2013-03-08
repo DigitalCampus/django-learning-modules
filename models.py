@@ -143,7 +143,10 @@ class Tracker(models.Model):
             return title
         media = Media.objects.filter(digest=self.digest)
         for m in media:
-            return m.filename + " (" + m.module.get_title()+")"
+            title = m.filename
+            if module_title:
+                title  = title + " (" + m.module.get_title()+")"
+            return title
         return "Not found"
  
 class ModuleDownload(models.Model):
