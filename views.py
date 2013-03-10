@@ -18,6 +18,10 @@ import datetime
 
 def home_view(request):
     module_list = Module.objects.all().order_by('title')
+    module_set = []
+    for m in module_list:
+        m.activity = []
+        module_set.append(m)
     activity = []
     startdate = datetime.datetime.now()
     staff = User.objects.filter(is_staff=True)
@@ -28,7 +32,10 @@ def home_view(request):
         year = temp.strftime("%y")
         count = Tracker.objects.filter(submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
         activity.append([temp.strftime("%d %b %y"),count])
-    return render_to_response('learning_modules/home.html',{'module_list': module_list, 'recent_activity':activity}, context_instance=RequestContext(request))
+        for m in module_set:
+            mod_count = Tracker.objects.filter(module=m, submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+            m.activity.append([temp.strftime("%d %b %y"),mod_count])
+    return render_to_response('learning_modules/home.html',{'module_set': module_set, 'recent_activity':activity}, context_instance=RequestContext(request))
 
 def upload(request):
     if request.method == 'POST': # if form submitted...

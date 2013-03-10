@@ -15,12 +15,22 @@
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Date');
 		data.addColumn('number', 'Total');
+		{% for m in module_set %}
+			data.addColumn('number', '{{ m.shortname }}');
+		{% endfor %}
+		
 		data.addRows( {{ recent_activity|length }} );
 		
 		{% for date,count in recent_activity %}
 			data.setValue({{ forloop.counter0 }},0,'{{ date }}');
 			data.setValue({{ forloop.counter0 }},1,{{ count }});
-
+		{% endfor %}
+		
+		
+		{% for m in module_set %}
+			{% for date,count in m.activity %}
+				data.setValue({{ forloop.counter0 }},{{ forloop.parentloop.counter0}}+2,{{ count }});
+			{% endfor %}
 		{% endfor %}
 
         var chart = new google.visualization.LineChart(document.getElementById('activity_chart_div'));
@@ -48,11 +58,12 @@ Or <a href="https://www.youtube.com/watch?v=Q1ZoNd-WdmQ">watch a video</a> of ou
 <div id="activity_chart_div" class="graph">{% trans 'graph_generating'%}</div>
 
 <h3>{% trans 'modules' %}</h3>
-{% if module_list %}
+{% if module_set %}
 <ul>
-	{% for module in module_list %}
+	{% for module in module_set %}
 	<li><a href="{% url module_recent_activity module.id %}">
-		{{ module.title|title_lang:LANGUAGE_CODE }}</a> ({{module.no_downloads}} downloads by {{module.no_distinct_downloads}} users)</li> {% endfor %}
+		{{ module.title|title_lang:LANGUAGE_CODE }}</a> ({{module.no_downloads}} downloads by {{module.no_distinct_downloads}} users)</li> 
+	{% endfor %}
 </ul>
 {% endif %}
 
