@@ -16,7 +16,7 @@
 		data.addColumn('string', 'Date');
 		data.addColumn('number', 'Total');
 		{% for m in module_set %}
-			data.addColumn('number', '{{ m.shortname }}');
+			data.addColumn('number', '{{ m.title|title_lang:LANGUAGE_CODE }}');
 		{% endfor %}
 		
 		data.addRows( {{ recent_activity|length }} );
