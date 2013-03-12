@@ -45,8 +45,9 @@ def handle_uploaded_file(f, extract_path, request):
         for v in meta.getElementsByTagName("versionid")[:1]:
             versionid = int(v.firstChild.nodeValue)
         temp_title = {}
-        for t in meta.getElementsByTagName("title"):
-            temp_title[t.getAttribute('lang')] = t.firstChild.nodeValue
+        for t in meta.childNodes:
+            if t.nodeName == "title":
+                temp_title[t.getAttribute('lang')] = t.firstChild.nodeValue
         title = json.dumps(temp_title)
         shortname = ''
         for sn in meta.getElementsByTagName("shortname")[:1]:
