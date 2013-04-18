@@ -18,7 +18,7 @@ class Module(models.Model):
     badge_icon = models.FileField(upload_to="badges")
    
     def __unicode__(self):
-        return self.get_title()
+        return self.get_title(self)
     
     def getAbsPath(self):
         return settings.MODULE_UPLOAD_DIR + self.filename
@@ -102,6 +102,10 @@ class Media(models.Model):
     filename = models.CharField(max_length=200)
     download_url = models.URLField()
     
+    class Meta:
+        verbose_name = _('Media')
+        verbose_name_plural = _('Media')
+        
     def __unicode__(self):
         return self.filename
     

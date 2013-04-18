@@ -5,8 +5,11 @@ from django.contrib import admin
 
 class TrackerAdmin(admin.ModelAdmin):
     list_display = ('user', 'submitted_date', 'agent', 'module')
+    
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'version', 'lastupdated_date', 'user', 'filename')
 
-admin.site.register(Module)
+admin.site.register(Module,ModuleAdmin)
 admin.site.register(Section)
 admin.site.register(Activity)
 admin.site.register(Tracker, TrackerAdmin)
