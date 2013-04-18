@@ -3,7 +3,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 import json
+
 
 class Module(models.Model):
     user = models.ForeignKey(User)
@@ -77,7 +79,11 @@ class Activity(models.Model):
     
     def __unicode__(self):
         return self.get_title()
-
+    
+    class Meta:
+        verbose_name = _('Activity')
+        verbose_name_plural = _('Activities')
+        
     def get_title(self,lang='en'):
         try:
             titles = json.loads(self.title)

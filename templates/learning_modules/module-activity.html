@@ -41,7 +41,7 @@
 {% endblock extra_scripts %}
 {% block content %}
 
-<h2><a href="{% url modules_home %}">Modules</a> > {{ module.title|title_lang:LANGUAGE_CODE }}</h2>
+<h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }}</h2>
 
 {% if user.is_staff or user == module.owner %}
 	 <a href="{% url module_recent_activity_detail module.id %}">Detail</a>
