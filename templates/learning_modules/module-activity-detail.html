@@ -18,7 +18,7 @@
 	</div>
 	{% for t in page.object_list %}
 		<div class="quizlist">
-			<div class='trackercell'>{{ t.submitted_date|date:"d M Y H:i" }}</a></div>
+			<div class='trackercell'>{{ t.tracker_date|date:"d M Y H:i" }}</a></div>
 			<div class='trackercell'>{{ t.user.first_name }} {{ t.user.last_name }}</div>
 			<div class='trackercell'>{{ t.type }}</div>
 			<div class='trackertitle'>{{ t.title }}</div>

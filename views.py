@@ -30,10 +30,10 @@ def home_view(request):
         day = temp.strftime("%d")
         month = temp.strftime("%m")
         year = temp.strftime("%y")
-        count = Tracker.objects.filter(submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+        count = Tracker.objects.filter(tracker_date__day=day,tracker_date__month=month,tracker_date__year=year).exclude(user_id__in=staff).count()
         activity.append([temp.strftime("%d %b %y"),count])
         for m in module_set:
-            mod_count = Tracker.objects.filter(module=m, submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+            mod_count = Tracker.objects.filter(module=m, tracker_date__day=day,tracker_date__month=month,tracker_date__year=year).exclude(user_id__in=staff).count()
             m.activity.append([temp.strftime("%d %b %y"),mod_count])
     return render_to_response('learning_modules/home.html',{'module_set': module_set, 'recent_activity':activity}, context_instance=RequestContext(request))
 
@@ -63,9 +63,9 @@ def recent_activity(request,id):
         day = temp.strftime("%d")
         month = temp.strftime("%m")
         year = temp.strftime("%y")
-        count_act_page = Tracker.objects.filter(module=module,type='page',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
-        count_act_quiz = Tracker.objects.filter(module=module,type='quiz',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
-        count_media = Tracker.objects.filter(module=module,type='media',submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).exclude(user_id__in=staff).count()
+        count_act_page = Tracker.objects.filter(module=module,type='page',tracker_date__day=day,tracker_date__month=month,tracker_date__year=year).exclude(user_id__in=staff).count()
+        count_act_quiz = Tracker.objects.filter(module=module,type='quiz',tracker_date__day=day,tracker_date__month=month,tracker_date__year=year).exclude(user_id__in=staff).count()
+        count_media = Tracker.objects.filter(module=module,type='media',tracker_date__day=day,tracker_date__month=month,tracker_date__year=year).exclude(user_id__in=staff).count()
         dates.append([temp.strftime("%d %b %y"),count_act_page,count_act_quiz,count_media])
     return render_to_response('learning_modules/module-activity.html',{'module': module,'data':dates}, context_instance=RequestContext(request))
 
@@ -80,11 +80,8 @@ def recent_activity_detail(request,id):
     except Module.DoesNotExist:
         raise Http404
         
-    #quiz_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='quiz').values_list('digest',flat=True)
-    #page_activity_digests = Activity.objects.filter(section__in=Section.objects.filter(module=module),type='page').values_list('digest',flat=True)
-    #media_digests = Media.objects.filter(module=module).values_list('digest',flat=True)
     staff = User.objects.filter(is_staff=True)
-    trackers = Tracker.objects.filter(module=module).exclude(user_id__in=staff).order_by('-submitted_date')
+    trackers = Tracker.objects.filter(module=module).exclude(user_id__in=staff).order_by('-tracker_date')
     paginator = Paginator(trackers, 25)
     # Make sure page request is an int. If not, deliver first page.
     try:
