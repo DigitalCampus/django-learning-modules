@@ -41,6 +41,24 @@ class TrackerResource(ModelResource):
         always_return_data =  True
         fields = ['points','digest','data','tracker_date','badges','module']
         
+    def is_valid(self, bundle, request=None):
+        digest = bundle.data['digest']
+        exists = False
+        try:
+            activity = Activity.objects.get(digest=bundle.data['digest'])
+            exists = True
+        except Activity.DoesNotExist:
+            pass
+        
+        try:
+            media = Media.objects.get(digest=bundle.data['digest'])
+            exists = True
+        except Media.DoesNotExist:
+            pass
+        
+        if not exists:
+            raise NotFound
+            
     def hydrate(self, bundle, request=None):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
         if 'id' in bundle.data:
