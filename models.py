@@ -1,16 +1,16 @@
 # learning_modules/models.py
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 import json
+import datetime
 
 
 class Module(models.Model):
     user = models.ForeignKey(User)
-    created_date = models.DateTimeField('date created',default=datetime.now)
-    lastupdated_date = models.DateTimeField('date updated',default=datetime.now)
+    created_date = models.DateTimeField('date created',default=datetime.datetime.now)
+    lastupdated_date = models.DateTimeField('date updated',default=datetime.datetime.now)
     version = models.BigIntegerField()
     title = models.TextField(blank=False)
     shortname = models.CharField(max_length=20)
@@ -111,8 +111,8 @@ class Media(models.Model):
     
 class Tracker(models.Model):
     user = models.ForeignKey(User)
-    submitted_date = models.DateTimeField('date submitted',default=datetime.now)
-    tracker_date = models.DateTimeField('date tracked',default=datetime.now)
+    submitted_date = models.DateTimeField('date submitted',default=datetime.datetime.now)
+    tracker_date = models.DateTimeField('date tracked',default=datetime.datetime.now)
     ip = models.IPAddressField()
     agent = models.TextField(blank=True)
     digest = models.CharField(max_length=100)
@@ -123,12 +123,9 @@ class Tracker(models.Model):
     def __unicode__(self):
         return self.agent
     
-    def is_first_tracker_today(self,user):
-        date = datetime.now()
-        day = date.strftime("%d")
-        month = date.strftime("%m")
-        year = date.strftime("%y")
-        no_attempts_today = Tracker.objects.filter(user=user,digest=self.digest,submitted_date__day=day,submitted_date__month=month,submitted_date__year=year).count()
+    def is_first_tracker_today(self):
+        olddate = datetime.datetime.now() + datetime.timedelta(hours=-24)
+        no_attempts_today = Tracker.objects.filter(user=self.user,digest=self.digest,submitted_date__gte=olddate).count()
         if no_attempts_today == 1:
             return True
         else:
@@ -158,19 +155,28 @@ class Tracker(models.Model):
                 title  = title + " (" + m.module.get_title()+")"
             return title
         return "Not found"
+    
+    def activity_exists(self):
+        activities = Activity.objects.filter(digest=self.digest).count()
+        if activities >= 1:
+            return True
+        media = Media.objects.filter(digest=self.digest).count()
+        if media >= 1:
+            return True
+        return False
  
 class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
     module = models.ForeignKey(Module)
-    download_date = models.DateTimeField('date downloaded',default=datetime.now)
+    download_date = models.DateTimeField('date downloaded',default=datetime.datetime.now)
     module_version = models.BigIntegerField(default=0)
     
  
 class Cohort(models.Model):
     module = models.ForeignKey(Module)  
     description = models.CharField(max_length=100)
-    start_date = models.DateTimeField(default=datetime.now)
-    end_date = models.DateTimeField(default=datetime.now)
+    start_date = models.DateTimeField(default=datetime.datetime.now)
+    end_date = models.DateTimeField(default=datetime.datetime.now)
 
     def __unicode__(self):
         return self.description
@@ -187,8 +193,8 @@ class Participant(models.Model):
 class Message(models.Model):
     module = models.ForeignKey(Module) 
     author = models.ForeignKey(User)
-    date_created = models.DateTimeField(default=datetime.now)
-    publish_date = models.DateTimeField(default=datetime.now)
+    date_created = models.DateTimeField(default=datetime.datetime.now)
+    publish_date = models.DateTimeField(default=datetime.datetime.now)
     message = models.CharField(max_length=200)
     link = models.URLField(verify_exists=False,max_length=255)  
     icon = models.CharField(max_length=200)
