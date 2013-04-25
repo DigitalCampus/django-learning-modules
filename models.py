@@ -140,20 +140,13 @@ class Tracker(models.Model):
             return "media"
         return None
         
-    def get_activity_title(self, module_title = True):
+    def get_activity_title(self):
         activities = Activity.objects.filter(digest=self.digest)
         for a in activities:
-            title = a.get_title() + " (" 
-            if module_title:
-                title  = title + a.section.module.get_title() + " / "
-            title = title + a.section.get_title() +")"
-            return title
+            return a.get_title() + " (" + a.section.get_title() +")"
         media = Media.objects.filter(digest=self.digest)
         for m in media:
-            title = m.filename
-            if module_title:
-                title  = title + " (" + m.module.get_title()+")"
-            return title
+            return m.filename
         return "Not found"
     
     def activity_exists(self):
@@ -180,6 +173,26 @@ class Cohort(models.Model):
 
     def __unicode__(self):
         return self.description
+    
+    @staticmethod
+    def student_member_now(module,user):
+        now = datetime.datetime.now()
+        cohorts = Cohort.objects.filter(module=module,start_date__lte=now,end_date__gte=now)
+        for c in cohorts:
+            participants = c.participant_set.filter(user=user,role='student')
+            for p in participants:
+                return c
+        return None
+    
+    @staticmethod
+    def teacher_member_now(module,user):
+        now = datetime.datetime.now()
+        cohorts = Cohort.objects.filter(module=module,start_date__lte=now,end_date__gte=now)
+        for c in cohorts:
+            participants = c.participant_set.filter(user=user,role='teacher')
+            for p in participants:
+                return c
+        return None
     
 class Participant(models.Model):
     ROLE_TYPES = (

@@ -93,7 +93,7 @@ def recent_activity_detail(request,id):
     try:
         tracks = paginator.page(page)
         for t in tracks:
-            t.title = t.get_activity_title(False)
+            t.title = t.get_activity_title()
     except (EmptyPage, InvalidPage):
         tracks = paginator.page(paginator.num_pages)
     return render_to_response('learning_modules/module-activity-detail.html',{'module': module,'page':tracks,}, context_instance=RequestContext(request))
