@@ -1,6 +1,7 @@
 # mquiz_api/resources.py
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.conf import settings
 from tastypie import fields, bundle
 from tastypie.resources import ModelResource
 from tastypie.authentication import ApiKeyAuthentication
@@ -17,6 +18,8 @@ from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 import os
 import json
+import zipfile
+import shutil
 from badges.models import Points, Award
 from learning_modules.signals import module_downloaded
 
@@ -114,9 +117,24 @@ class ModuleResource(ModelResource):
         
         pk = kwargs.pop('pk', None)
         module = self._meta.queryset.get(pk = pk)
-        wrapper = FileWrapper(file(module.getAbsPath()))
+        
+        file_to_download = module.getAbsPath();
+        #if has schedule...
+        #if true:
+        #    pass
+        #else:
+        #    pass
+            
+        
+        # add scheduling XML file
+        #shutil.copy2(module.getAbsPath(), settings.MODULE_UPLOAD_DIR +"temp/123-" + module.filename)
+        #zip = zipfile.ZipFile(settings.MODULE_UPLOAD_DIR +"temp/123-" + module.filename,'a')
+        #zip.writestr(module.shortname +"/schedule.xml","this is my xml schedule")
+        #zip.close()
+
+        wrapper = FileWrapper(file(file_to_download))
         response = HttpResponse(wrapper, content_type='application/zip') #or whatever type you want there
-        response['Content-Length'] = os.path.getsize(module.getAbsPath())
+        response['Content-Length'] = os.path.getsize(file_to_download)
         response['Content-Disposition'] = 'attachment; filename="%s"' %(module.filename)
         
         md = ModuleDownload()

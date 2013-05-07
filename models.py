@@ -120,6 +120,10 @@ class Tracker(models.Model):
     module = models.ForeignKey(Module,null=True, blank=True, default=None)
     type = models.CharField(max_length=10,null=True, blank=True, default=None)
     
+    class Meta:
+        verbose_name = _('Tracker')
+        verbose_name_plural = _('Trackers')
+        
     def __unicode__(self):
         return self.agent
     
@@ -164,6 +168,9 @@ class ModuleDownload(models.Model):
     download_date = models.DateTimeField('date downloaded',default=datetime.datetime.now)
     module_version = models.BigIntegerField(default=0)
     
+    class Meta:
+        verbose_name = _('ModuleDownload')
+        verbose_name_plural = _('ModuleDownloads')
  
 class Cohort(models.Model):
     module = models.ForeignKey(Module)  
@@ -171,6 +178,10 @@ class Cohort(models.Model):
     start_date = models.DateTimeField(default=datetime.datetime.now)
     end_date = models.DateTimeField(default=datetime.datetime.now)
 
+    class Meta:
+        verbose_name = _('Cohort')
+        verbose_name_plural = _('Cohorts')
+        
     def __unicode__(self):
         return self.description
     
@@ -194,6 +205,16 @@ class Cohort(models.Model):
                 return c
         return None
     
+    @staticmethod
+    def member_now(module,user):
+        now = datetime.datetime.now()
+        cohorts = Cohort.objects.filter(module=module,start_date__lte=now,end_date__gte=now)
+        for c in cohorts:
+            participants = c.participant_set.filter(user=user)
+            for p in participants:
+                return c
+        return None
+    
 class Participant(models.Model):
     ROLE_TYPES = (
         ('teacher', 'Teacher'),
@@ -203,6 +224,10 @@ class Participant(models.Model):
     user = models.ForeignKey(User)
     role = models.CharField(max_length=20,choices=ROLE_TYPES)
     
+    class Meta:
+        verbose_name = _('Participant')
+        verbose_name_plural = _('Participants')
+        
 class Message(models.Model):
     module = models.ForeignKey(Module) 
     author = models.ForeignKey(User)
@@ -211,3 +236,7 @@ class Message(models.Model):
     message = models.CharField(max_length=200)
     link = models.URLField(verify_exists=False,max_length=255)  
     icon = models.CharField(max_length=200)
+    
+    class Meta:
+        verbose_name = _('Message')
+        verbose_name_plural = _('Messages')
