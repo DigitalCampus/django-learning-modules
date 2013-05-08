@@ -8,7 +8,7 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import NotFound, BadRequest, InvalidFilterError, HydrationError, InvalidSortError, ImmediateHttpResponse
-from learning_modules.models import Activity, Section, Tracker, Module, ModuleDownload, Media
+from learning_modules.models import Activity, Section, Tracker, Module, ModuleDownload, Media, Schedule, ActivitySchedule, Cohort
 from learning_modules.api.serializers import PrettyJSONSerializer, ModuleJSONSerializer
 from tastypie.validation import Validation
 from django.http import HttpRequest
@@ -119,18 +119,23 @@ class ModuleResource(ModelResource):
         module = self._meta.queryset.get(pk = pk)
         
         file_to_download = module.getAbsPath();
-        #if has schedule...
-        #if true:
-        #    pass
-        #else:
-        #    pass
-            
+        schedule = None
         
-        # add scheduling XML file
-        #shutil.copy2(module.getAbsPath(), settings.MODULE_UPLOAD_DIR +"temp/123-" + module.filename)
-        #zip = zipfile.ZipFile(settings.MODULE_UPLOAD_DIR +"temp/123-" + module.filename,'a')
-        #zip.writestr(module.shortname +"/schedule.xml","this is my xml schedule")
-        #zip.close()
+        if module.schedule:
+            schedule = module.schedule
+        
+        cohort = Cohort.member_now(module,request.user)
+        if cohort:
+            if cohort.schedule:
+                schedule = cohort.schedule
+        
+        # add scheduling XML file     
+        if schedule:
+            file_to_download = settings.MODULE_UPLOAD_DIR +"temp/"+ str(request.user.id) + "-" + module.filename
+            shutil.copy2(module.getAbsPath(), file_to_download)
+            zip = zipfile.ZipFile(file_to_download,'a')
+            zip.writestr(module.shortname +"/schedule.xml",schedule.to_xml_string())
+            zip.close()
 
         wrapper = FileWrapper(file(file_to_download))
         response = HttpResponse(wrapper, content_type='application/zip') #or whatever type you want there

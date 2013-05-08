@@ -1,5 +1,5 @@
 # learning_modules/admin.py
-from learning_modules.models import Module,Section, Activity, Tracker, Media, Cohort, Participant, Message
+from learning_modules.models import Module,Section, Activity, Tracker, Media, Cohort, Participant, Message, Schedule, ActivitySchedule
 from django.contrib import admin
 
 
@@ -23,3 +23,5 @@ admin.site.register(Media)
 admin.site.register(Cohort, CohortAdmin)
 admin.site.register(Participant, ParticipantAdmin)
 admin.site.register(Message)
+admin.site.register(Schedule)
+admin.site.register(ActivitySchedule)

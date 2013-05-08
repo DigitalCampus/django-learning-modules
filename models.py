@@ -3,10 +3,44 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from xml.dom.minidom import *
 import json
 import datetime
 
 
+class Schedule(models.Model):
+    title = models.TextField(blank=False)
+    
+    class Meta:
+        verbose_name = _('Schedule')
+        verbose_name_plural = _('Schedules')
+        
+    def __unicode__(self):
+        return self.title
+    
+    def to_xml_string(self):
+        doc = Document();
+        schedule = doc.createElement('schedule')
+        doc.appendChild(schedule)
+        act_scheds = ActivitySchedule.objects.filter(schedule=self)
+        for acts in act_scheds:
+            act = doc.createElement('activity')
+            act.setAttribute('digest',acts.digest)
+            act.setAttribute('startdate',acts.start_date.strftime('%Y-%m-%d %H:%M:%S'))
+            act.setAttribute('enddate',acts.end_date.strftime('%Y-%m-%d %H:%M:%S'))
+            schedule.appendChild(act)
+        return doc.toxml()
+        
+class ActivitySchedule(models.Model):
+    schedule = models.ForeignKey(Schedule)
+    digest = models.CharField(max_length=100)
+    start_date = models.DateTimeField(default=datetime.datetime.now)
+    end_date = models.DateTimeField(default=datetime.datetime.now)
+    
+    class Meta:
+        verbose_name = _('ActivitySchedule')
+        verbose_name_plural = _('ActivitySchedules')
+        
 class Module(models.Model):
     user = models.ForeignKey(User)
     created_date = models.DateTimeField('date created',default=datetime.datetime.now)
@@ -15,8 +49,13 @@ class Module(models.Model):
     title = models.TextField(blank=False)
     shortname = models.CharField(max_length=20)
     filename = models.CharField(max_length=200)
-    badge_icon = models.FileField(upload_to="badges")
+    badge_icon = models.FileField(upload_to="badges",blank=True, default=None)
+    schedule = models.ForeignKey(Schedule,null=True, blank=True, default=None)
    
+    class Meta:
+        verbose_name = _('Module')
+        verbose_name_plural = _('Modules')
+        
     def __unicode__(self):
         return self.get_title(self)
     
@@ -55,6 +94,10 @@ class Section(models.Model):
     order = models.IntegerField()
     title = models.TextField(blank=False)
     
+    class Meta:
+        verbose_name = _('Section')
+        verbose_name_plural = _('Sections')
+        
     def __unicode__(self):
         return self.get_title()
     
@@ -177,7 +220,8 @@ class Cohort(models.Model):
     description = models.CharField(max_length=100)
     start_date = models.DateTimeField(default=datetime.datetime.now)
     end_date = models.DateTimeField(default=datetime.datetime.now)
-
+    schedule = models.ForeignKey(Schedule,null=True, blank=True, default=None)
+    
     class Meta:
         verbose_name = _('Cohort')
         verbose_name_plural = _('Cohorts')
