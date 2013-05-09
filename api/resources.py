@@ -135,7 +135,7 @@ class ModuleResource(ModelResource):
             zip.close()
 
         wrapper = FileWrapper(file(file_to_download))
-        response = HttpResponse(wrapper, content_type='application/zip') #or whatever type you want there
+        response = HttpResponse(wrapper, content_type='application/zip')
         response['Content-Length'] = os.path.getsize(file_to_download)
         response['Content-Disposition'] = 'attachment; filename="%s"' %(module.filename)
         
@@ -167,6 +167,7 @@ class ModuleResource(ModelResource):
                 schedule = cohort.schedule
         if schedule:
             bundle.data['schedule'] = schedule.lastupdated_date
+            bundle.data['schedule_id'] = schedule.id
         
         return bundle
     
