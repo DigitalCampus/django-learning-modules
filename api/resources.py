@@ -121,7 +121,7 @@ class ModuleResource(ModelResource):
         file_to_download = module.getAbsPath();
         schedule = module.get_default_schedule()
         
-        cohort = Cohort.member_now(module,bundle.request.user)
+        cohort = Cohort.member_now(module,request.user)
         if cohort:
             if cohort.schedule:
                 schedule = cohort.schedule
