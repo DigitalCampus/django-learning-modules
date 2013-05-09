@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     url(r'^upload/success/$', direct_to_template, {"template": "learning_modules/upload-success.html",}, name="modules_upload_success"),
     url(r'^(?P<id>\d+)/$', 'learning_modules.views.recent_activity', name="module_recent_activity"),
     url(r'^(?P<id>\d+)/detail/$', 'learning_modules.views.recent_activity_detail', name="module_recent_activity_detail"),
+    url(r'^(?P<id>\d+)/schedule/$', 'learning_modules.views.schedule', name="module_schedule"),
+    url(r'^(?P<id>\d+)/schedule/add/$', 'learning_modules.views.schedule_add', name="module_schedule_add"),
     (r'^api/', include(v1_api.urls)),
 
 )

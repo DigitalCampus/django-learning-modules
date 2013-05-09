@@ -68,6 +68,7 @@ class Schedule(models.Model):
     default = models.BooleanField(default=False)
     created_date = models.DateTimeField('date created',default=datetime.datetime.now)
     lastupdated_date = models.DateTimeField('date updated',default=datetime.datetime.now)
+    created_by = models.ForeignKey(User)
     
     class Meta:
         verbose_name = _('Schedule')

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load title_lang %}
+
+{% block content %}
+
+<h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }} > {% trans 'schedules' %}</h2>
+
+{% if default_schedule %}
+	<p>{{ default_schedule.title }}</p>
+{% else %}
+	<p>{% trans 'No default schedule' %}</p>
+	<p><a href="{% url module_schedule_add module.id %}">{% trans 'Add a schedule' %}</a></p>
+{% endif %}
+
+{% endblock %}
