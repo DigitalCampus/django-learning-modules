@@ -121,7 +121,7 @@ class ModuleResource(ModelResource):
         file_to_download = module.getAbsPath();
         schedule = module.get_default_schedule()
         
-        cohort = Cohort.member_now(module,request.user)
+        cohort = Cohort.member_now(module,bundle.request.user)
         if cohort:
             if cohort.schedule:
                 schedule = cohort.schedule
@@ -158,5 +158,15 @@ class ModuleResource(ModelResource):
         bundle.data['url'] = prefix + bundle.request.META['SERVER_NAME'] + bundle.data['resource_uri'] + 'download/'
         # make sure title is shown as json object (not string representation of one)
         bundle.data['title'] = json.loads(bundle.data['title'])
+        
+        module = Module.objects.get(pk=bundle.obj.pk)
+        schedule = module.get_default_schedule()
+        cohort = Cohort.member_now(module,bundle.request.user)
+        if cohort:
+            if cohort.schedule:
+                schedule = cohort.schedule
+        if schedule:
+            bundle.data['schedule'] = schedule.lastupdated_date
+        
         return bundle
     
