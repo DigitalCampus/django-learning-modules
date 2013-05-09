@@ -92,30 +92,14 @@ def recent_activity_detail(request,id):
     return render_to_response('learning_modules/module-activity-detail.html',{'module': module,'page':tracks,}, context_instance=RequestContext(request))
 
 
-def schedule(request,id):
-    module = check_owner(request,id)    
-    return render_to_response('learning_modules/module-schedules.html',{'module': module,'default_schedule':module.get_default_schedule(),'cohort_schedules':None}, context_instance=RequestContext(request))
+def schedule(request,module_id):
+    module = check_owner(request,module_id)    
+    schedules = Schedule.objects.filter(module=module)
+    return render_to_response('learning_modules/module-schedules.html',{'module': module,'schedules':schedules,}, context_instance=RequestContext(request))
     
-def schedule_add(request,id):
-    module = check_owner(request,id)
+def schedule_add(request,module_id):
+    module = check_owner(request,module_id)
     ActivityScheduleFormSet = formset_factory(ActivityScheduleForm, extra=0)
-    activities = Activity.objects.filter(section__module = module)
-    initial = []
-    section = None
-    start_date = datetime.datetime.now() 
-    end_date = datetime.datetime.now() + datetime.timedelta(days=7)
-    for a in activities:
-        if a.section != section:
-            section = a.section
-            start_date = start_date + datetime.timedelta(days=7)
-            end_date = end_date + datetime.timedelta(days=7)
-        data = {}
-        data['title'] = a.title
-        data['digest'] = a.digest
-        data['section'] = a.section.title
-        data['start_date'] = start_date
-        data['end_date'] = end_date
-        initial.append(data)
 
     if request.method == 'POST':
         form = ScheduleForm(request.POST)
@@ -145,16 +129,94 @@ def schedule_add(request,id):
                     act_sched.end_date = end_date
                     act_sched.digest = digest.strip()
                     act_sched.save()
-        return HttpResponseRedirect('../saved/')
+            return HttpResponseRedirect('../saved/')
     else:
-        
-        form = ScheduleForm()
+        activities = Activity.objects.filter(section__module = module)
+        initial = []
+        section = None
+        start_date = datetime.datetime.now() 
+        end_date = datetime.datetime.now() + datetime.timedelta(days=7)
+        for a in activities:
+            if a.section != section:
+                section = a.section
+                start_date = start_date + datetime.timedelta(days=7)
+                end_date = end_date + datetime.timedelta(days=7)
+            data = {}
+            data['title'] = a.title
+            data['digest'] = a.digest
+            data['section'] = a.section.title
+            data['start_date'] = start_date
+            data['end_date'] = end_date
+            initial.append(data)
+            form = ScheduleForm()
         formset = ActivityScheduleFormSet(initial=initial)
 
     return render(request, 'learning_modules/schedule-form.html', {'form': form, 'formset': formset,'module':module, })
 
-def schedule_saved(request, id):
-    module = check_owner(request,id)
+def schedule_edit(request,module_id, schedule_id):
+    module = check_owner(request,module_id)
+    schedule = Schedule.objects.get(pk=schedule_id)
+    ActivityScheduleFormSet = formset_factory(ActivityScheduleForm, extra=0)
+    activities = Activity.objects.filter(section__module = module)
+    
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        formset = ActivityScheduleFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            schedule.title = form.cleaned_data.get("title").strip()
+            schedule.default = form.cleaned_data.get("default")
+            schedule.lastupdated_date = datetime.datetime.now()
+            
+            # remvoe any existing default for this schedule
+            if schedule.default:
+                Schedule.objects.filter(module=module).update(default=False)
+                
+            schedule.save()
+            
+            # remove all the old schedule Activities
+            ActivitySchedule.objects.filter(schedule=schedule).delete()
+            
+            for f in formset:
+                act_sched = ActivitySchedule()
+                start_date = f.cleaned_data.get("start_date")
+                end_date = f.cleaned_data.get("end_date")
+                digest = f.cleaned_data.get("digest")
+                if start_date is not None:
+                    act_sched = ActivitySchedule()
+                    act_sched.schedule = schedule
+                    act_sched.start_date = start_date
+                    act_sched.end_date = end_date
+                    act_sched.digest = digest.strip()
+                    act_sched.save()
+            return HttpResponseRedirect('../saved/')
+    else:
+        initial = []
+        section = None
+        for a in activities:
+            if a.section != section:
+                section = a.section
+            data = {}
+            data['title'] = a.title
+            data['digest'] = a.digest
+            data['section'] = a.section.title
+            try:
+                act_s = ActivitySchedule.objects.get(schedule=schedule,digest = a.digest)
+                start_date = act_s.start_date
+                end_date = act_s.end_date
+            except ActivitySchedule.DoesNotExist:
+                start_date = None
+                end_date = None
+            data['start_date'] = start_date
+            data['end_date'] = end_date
+            initial.append(data)
+        form = ScheduleForm(initial={'title':schedule.title,
+                                    'default':schedule.default})
+        formset = ActivityScheduleFormSet(initial=initial)
+
+    return render(request, 'learning_modules/schedule-form.html', {'form': form, 'formset': formset,'module':module, })
+
+def schedule_saved(request, module_id, schedule_id=None):
+    module = check_owner(request,module_id)
     return render_to_response('learning_modules/schedule-saved.html', 
                                     {'module': module},
                                   context_instance=RequestContext(request))

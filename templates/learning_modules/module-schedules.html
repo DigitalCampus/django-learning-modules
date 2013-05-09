@@ -6,11 +6,23 @@
 
 <h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }} > {% trans 'schedules' %}</h2>
 
-{% if default_schedule %}
-	<p>{{ default_schedule.title }}</p>
+{% if schedules %}
+	<ul>
+	{% for schedule in schedules %}
+		<li>
+			<a href="{% url learning_modules.views.schedule_edit schedule.module.id schedule.id %}">{{ schedule.title }}</a> 
+			{% if schedule.default %}	
+				({% trans 'default' %})
+			{% endif %} 
+			
+		</li> 
+	{% endfor %}
+	</ul>
 {% else %}
-	<p>{% trans 'No default schedule' %}</p>
-	<p><a href="{% url module_schedule_add module.id %}">{% trans 'Add a schedule' %}</a></p>
+	<p>{% trans 'No schedules' %}</p>
+	
 {% endif %}
+
+<p><a href="{% url module_schedule_add module.id %}">{% trans 'Add a schedule' %}</a></p>
 
 {% endblock %}
