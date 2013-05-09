@@ -119,10 +119,7 @@ class ModuleResource(ModelResource):
         module = self._meta.queryset.get(pk = pk)
         
         file_to_download = module.getAbsPath();
-        schedule = None
-        
-        if module.schedule:
-            schedule = module.schedule
+        schedule = module.get_default_schedule()
         
         cohort = Cohort.member_now(module,request.user)
         if cohort:

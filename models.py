@@ -7,40 +7,6 @@ from xml.dom.minidom import *
 import json
 import datetime
 
-
-class Schedule(models.Model):
-    title = models.TextField(blank=False)
-    
-    class Meta:
-        verbose_name = _('Schedule')
-        verbose_name_plural = _('Schedules')
-        
-    def __unicode__(self):
-        return self.title
-    
-    def to_xml_string(self):
-        doc = Document();
-        schedule = doc.createElement('schedule')
-        doc.appendChild(schedule)
-        act_scheds = ActivitySchedule.objects.filter(schedule=self)
-        for acts in act_scheds:
-            act = doc.createElement('activity')
-            act.setAttribute('digest',acts.digest)
-            act.setAttribute('startdate',acts.start_date.strftime('%Y-%m-%d %H:%M:%S'))
-            act.setAttribute('enddate',acts.end_date.strftime('%Y-%m-%d %H:%M:%S'))
-            schedule.appendChild(act)
-        return doc.toxml()
-        
-class ActivitySchedule(models.Model):
-    schedule = models.ForeignKey(Schedule)
-    digest = models.CharField(max_length=100)
-    start_date = models.DateTimeField(default=datetime.datetime.now)
-    end_date = models.DateTimeField(default=datetime.datetime.now)
-    
-    class Meta:
-        verbose_name = _('ActivitySchedule')
-        verbose_name_plural = _('ActivitySchedules')
-        
 class Module(models.Model):
     user = models.ForeignKey(User)
     created_date = models.DateTimeField('date created',default=datetime.datetime.now)
@@ -50,7 +16,6 @@ class Module(models.Model):
     shortname = models.CharField(max_length=20)
     filename = models.CharField(max_length=200)
     badge_icon = models.FileField(upload_to="badges",blank=True, default=None)
-    schedule = models.ForeignKey(Schedule,null=True, blank=True, default=None)
    
     class Meta:
         verbose_name = _('Module')
@@ -89,6 +54,51 @@ class Module(models.Model):
         no_distinct_downloads = ModuleDownload.objects.filter(module=self).values('user_id').distinct().count()
         return no_distinct_downloads
     
+    def get_default_schedule(self):
+        try:
+            schedule = Schedule.objects.get(default=True,module = self)
+        except Schedule.DoesNotExist:
+            return None
+        return schedule
+        
+
+class Schedule(models.Model):
+    title = models.TextField(blank=False)
+    module = models.ForeignKey(Module)
+    default = models.BooleanField(default=False)
+    created_date = models.DateTimeField('date created',default=datetime.datetime.now)
+    lastupdated_date = models.DateTimeField('date updated',default=datetime.datetime.now)
+    
+    class Meta:
+        verbose_name = _('Schedule')
+        verbose_name_plural = _('Schedules')
+        
+    def __unicode__(self):
+        return self.title
+    
+    def to_xml_string(self):
+        doc = Document();
+        schedule = doc.createElement('schedule')
+        doc.appendChild(schedule)
+        act_scheds = ActivitySchedule.objects.filter(schedule=self)
+        for acts in act_scheds:
+            act = doc.createElement('activity')
+            act.setAttribute('digest',acts.digest)
+            act.setAttribute('startdate',acts.start_date.strftime('%Y-%m-%d %H:%M:%S'))
+            act.setAttribute('enddate',acts.end_date.strftime('%Y-%m-%d %H:%M:%S'))
+            schedule.appendChild(act)
+        return doc.toxml()
+        
+class ActivitySchedule(models.Model):
+    schedule = models.ForeignKey(Schedule)
+    digest = models.CharField(max_length=100)
+    start_date = models.DateTimeField(default=datetime.datetime.now)
+    end_date = models.DateTimeField(default=datetime.datetime.now)
+    
+    class Meta:
+        verbose_name = _('ActivitySchedule')
+        verbose_name_plural = _('ActivitySchedules')
+           
 class Section(models.Model):
     module = models.ForeignKey(Module)
     order = models.IntegerField()
