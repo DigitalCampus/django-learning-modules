@@ -166,7 +166,7 @@ class ModuleResource(ModelResource):
             if cohort.schedule:
                 schedule = cohort.schedule
         if schedule:
-            bundle.data['schedule'] = schedule.lastupdated_date
+            bundle.data['schedule'] = schedule.lastupdated_date.strftime("%Y%m%d%H%M%S")
             bundle.data['schedule_id'] = schedule.id
         
         return bundle
