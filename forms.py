@@ -34,12 +34,6 @@ class ActivityScheduleForm(forms.Form):
         
         if start_date > end_date:
             raise forms.ValidationError("Start date must be before the end date.")
-        #if cc_myself and subject:
-            # Only do something if both fields are valid so far.
-         #   if "help" not in subject:
-        #        raise forms.ValidationError("Did not send for 'help' in "
-        #                "the subject despite CC'ing yourself.")
 
-        # Always return the full collection of cleaned data.
         return cleaned_data
     

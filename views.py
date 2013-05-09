@@ -145,14 +145,20 @@ def schedule_add(request,id):
                     act_sched.end_date = end_date
                     act_sched.digest = digest.strip()
                     act_sched.save()
-
+        return HttpResponseRedirect('../saved/')
     else:
         
         form = ScheduleForm()
         formset = ActivityScheduleFormSet(initial=initial)
 
     return render(request, 'learning_modules/schedule-form.html', {'form': form, 'formset': formset,'module':module, })
-    
+
+def schedule_saved(request, id):
+    module = check_owner(request,id)
+    return render_to_response('learning_modules/schedule-saved.html', 
+                                    {'module': module},
+                                  context_instance=RequestContext(request))
+      
 def check_owner(request,id):
     try:
         # check only the owner can view 

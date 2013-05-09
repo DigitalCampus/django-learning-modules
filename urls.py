@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^(?P<id>\d+)/detail/$', 'learning_modules.views.recent_activity_detail', name="module_recent_activity_detail"),
     url(r'^(?P<id>\d+)/schedule/$', 'learning_modules.views.schedule', name="module_schedule"),
     url(r'^(?P<id>\d+)/schedule/add/$', 'learning_modules.views.schedule_add', name="module_schedule_add"),
+    url(r'^(?P<id>\d+)/schedule/saved/$', 'learning_modules.views.schedule_saved', name="module_schedule_saved"),
     (r'^api/', include(v1_api.urls)),
 
 )
