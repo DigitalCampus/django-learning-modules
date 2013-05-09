@@ -161,10 +161,10 @@ class ModuleResource(ModelResource):
         
         module = Module.objects.get(pk=bundle.obj.pk)
         schedule = module.get_default_schedule()
-        cohort = Cohort.member_now(module,bundle.request.user)
-        if cohort:
-            if cohort.schedule:
-                schedule = cohort.schedule
+        #cohort = Cohort.member_now(module,bundle.user)
+        #if cohort:
+        #    if cohort.schedule:
+        #        schedule = cohort.schedule
         if schedule:
             bundle.data['schedule'] = schedule.lastupdated_date.strftime("%Y%m%d%H%M%S")
             sr = ScheduleResource()
