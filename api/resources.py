@@ -167,7 +167,36 @@ class ModuleResource(ModelResource):
                 schedule = cohort.schedule
         if schedule:
             bundle.data['schedule'] = schedule.lastupdated_date.strftime("%Y%m%d%H%M%S")
-            bundle.data['schedule_id'] = schedule.id
+            sr = ScheduleResource()
+            bundle.data['schedule_uri'] = sr.get_resource_uri(schedule)
         
         return bundle
     
+class ScheduleResource(ModelResource):
+    activityschedule = fields.ToManyField('learning_modules.api.resources.ActivityScheduleResource', 'activityschedule_set', related_name='schedule', full=True, null=True)
+    class Meta:
+        queryset = Schedule.objects.all()
+        resource_name = 'schedule'
+        allowed_methods = ['get']
+        fields = ['id', 'title']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization() 
+        always_return_data = True
+        include_resource_uri = False
+        
+class ActivityScheduleResource(ModelResource):
+    schedule = fields.ToOneField('learning_modules.api.resources.ScheduleResource', 'schedule', related_name='activityschedule')
+    class Meta:
+        queryset = ActivitySchedule.objects.all()
+        resource_name = 'activityschedule'
+        allowed_methods = ['get']
+        fields = ['digest', 'start_date', 'end_date']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization() 
+        always_return_data = True
+        include_resource_uri = False
+        
+    def dehydrate(self, bundle):
+        bundle.data['start_date'] = bundle.data['start_date'].strftime("%Y-%m-%d %H:%M:%S")
+        bundle.data['end_date'] = bundle.data['end_date'].strftime("%Y-%m-%d %H:%M:%S")
+        return bundle
