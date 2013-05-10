@@ -161,10 +161,10 @@ class ModuleResource(ModelResource):
         
         module = Module.objects.get(pk=bundle.obj.pk)
         schedule = module.get_default_schedule()
-        #cohort = Cohort.member_now(module,bundle.user)
-        #if cohort:
-        #    if cohort.schedule:
-        #        schedule = cohort.schedule
+        cohort = Cohort.member_now(module,bundle.request.user)
+        if cohort:
+            if cohort.schedule:
+                schedule = cohort.schedule
         if schedule:
             bundle.data['schedule'] = schedule.lastupdated_date.strftime("%Y%m%d%H%M%S")
             sr = ScheduleResource()
@@ -178,12 +178,16 @@ class ScheduleResource(ModelResource):
         queryset = Schedule.objects.all()
         resource_name = 'schedule'
         allowed_methods = ['get']
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'lastupdated_date']
         authentication = ApiKeyAuthentication()
         authorization = Authorization() 
         always_return_data = True
         include_resource_uri = False
-        
+       
+    def dehydrate(self, bundle):
+        bundle.data['version'] = bundle.data['lastupdated_date'].strftime("%Y%m%d%H%M%S")
+        return bundle 
+    
 class ActivityScheduleResource(ModelResource):
     schedule = fields.ToOneField('learning_modules.api.resources.ScheduleResource', 'schedule', related_name='activityschedule')
     class Meta:

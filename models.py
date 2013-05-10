@@ -80,6 +80,7 @@ class Schedule(models.Model):
     def to_xml_string(self):
         doc = Document();
         schedule = doc.createElement('schedule')
+        schedule.setAttribute('version',self.lastupdated_date.strftime('%Y%m%d%H%M%S'))
         doc.appendChild(schedule)
         act_scheds = ActivitySchedule.objects.filter(schedule=self)
         for acts in act_scheds:
@@ -99,7 +100,9 @@ class ActivitySchedule(models.Model):
     class Meta:
         verbose_name = _('ActivitySchedule')
         verbose_name_plural = _('ActivitySchedules')
-           
+    
+    
+          
 class Section(models.Model):
     module = models.ForeignKey(Module)
     order = models.IntegerField()
