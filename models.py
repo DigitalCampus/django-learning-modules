@@ -60,8 +60,20 @@ class Module(models.Model):
         except Schedule.DoesNotExist:
             return None
         return schedule
-        
 
+class Tag(models.Model):
+    name = models.TextField(blank=False)
+    module = models.ManyToManyField(Module)
+    created_date = models.DateTimeField('date created',default=datetime.datetime.now)
+    created_by = models.ForeignKey(User)
+    
+    class Meta:
+        verbose_name = _('Tag')
+        verbose_name_plural = _('Tags')
+        
+    def __unicode__(self):
+        return self.name
+    
 class Schedule(models.Model):
     title = models.TextField(blank=False)
     module = models.ForeignKey(Module)
