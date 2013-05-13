@@ -248,7 +248,7 @@ class Tracker(models.Model):
         for t in trackers:
             track = doc.createElement('tracker')
             track.setAttribute('digest',t['digest'])
-            track.setAttribute('startdate',t['max_tracker'].strftime('%Y-%m-%d %H:%M:%S'))
+            track.setAttribute('submitteddate',t['max_tracker'].strftime('%Y-%m-%d %H:%M:%S'))
             trackerXML.appendChild(track)
         return doc.toxml()
         
