@@ -1,5 +1,6 @@
 # learning_modules/models.py
 from django.db import models
+from django.db.models import Max
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -231,6 +232,28 @@ class Tracker(models.Model):
             return True
         return False
  
+    @staticmethod
+    def has_trackers(module,user):
+        count = Tracker.objects.filter(user=user, module=module).count()
+        if count > 0:
+            return True
+        return False
+     
+    @staticmethod
+    def to_xml_string(module,user):
+        doc = Document();
+        trackerXML = doc.createElement('trackers')
+        doc.appendChild(trackerXML)
+        trackers = Tracker.objects.filter(user=user, module=module).values('digest').annotate(max_tracker=Max('submitted_date'))
+        for t in trackers:
+            track = doc.createElement('tracker')
+            track.setAttribute('digest',t['digest'])
+            track.setAttribute('startdate',t['max_tracker'].strftime('%Y-%m-%d %H:%M:%S'))
+            trackerXML.appendChild(track)
+        return doc.toxml()
+        
+        return  
+     
 class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
     module = models.ForeignKey(Module)

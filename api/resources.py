@@ -120,18 +120,21 @@ class ModuleResource(ModelResource):
         
         file_to_download = module.getAbsPath();
         schedule = module.get_default_schedule()
-        
+        has_trackers = Tracker.has_trackers(module,request.user)
         cohort = Cohort.member_now(module,request.user)
         if cohort:
             if cohort.schedule:
                 schedule = cohort.schedule
         
         # add scheduling XML file     
-        if schedule:
+        if schedule or has_trackers:
             file_to_download = settings.MODULE_UPLOAD_DIR +"temp/"+ str(request.user.id) + "-" + module.filename
             shutil.copy2(module.getAbsPath(), file_to_download)
             zip = zipfile.ZipFile(file_to_download,'a')
-            zip.writestr(module.shortname +"/schedule.xml",schedule.to_xml_string())
+            if schedule:
+                zip.writestr(module.shortname +"/schedule.xml",schedule.to_xml_string())
+            if has_trackers:
+                zip.writestr(module.shortname +"/tracker.xml",Tracker.to_xml_string(module,request.user))
             zip.close()
 
         wrapper = FileWrapper(file(file_to_download))
