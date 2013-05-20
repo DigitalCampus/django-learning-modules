@@ -53,10 +53,12 @@ def handle_uploaded_file(f, extract_path, request):
         for sn in meta.getElementsByTagName("shortname")[:1]:
             shortname = sn.firstChild.nodeValue
     
+    old_module_filename = None
     # Find if module already exists
     try: 
         module = Module.objects.get(shortname = shortname)
-        
+        old_module_filename = module.filename
+         
         # check that the current user is allowed to wipe out the other module
         if module.user != request.user:
             messages.info(request,"Sorry, only the original owner may update this module")
@@ -127,5 +129,7 @@ def handle_uploaded_file(f, extract_path, request):
             media.digest = files.getAttribute("digest")
             media.save()
     
+    if old_module_filename is not None:
+        os.remove(settings.MODULE_UPLOAD_DIR + old_module_filename)
     return True       
               
