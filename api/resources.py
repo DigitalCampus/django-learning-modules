@@ -42,7 +42,7 @@ class TrackerResource(ModelResource):
         authorization = Authorization() 
         serializer = PrettyJSONSerializer()
         always_return_data =  True
-        fields = ['points','digest','data','tracker_date','badges','module']
+        fields = ['points','digest','data','tracker_date','badges','module','completed']
         
     def is_valid(self, bundle, request=None):
         digest = bundle.data['digest']
@@ -84,6 +84,14 @@ class TrackerResource(ModelResource):
         except Media.DoesNotExist:
             pass
         
+        # this try/except block is temporary until everyone is using client app v17
+        try:
+            json_data = json.loads(bundle.data['data'])
+            if json_data['activity'] == "completed":
+                bundle.obj.completed = True
+        except:
+            pass
+        
         return bundle 
     
     def dehydrate_points(self,bundle):
@@ -120,20 +128,20 @@ class ModuleResource(ModelResource):
         
         file_to_download = module.getAbsPath();
         schedule = module.get_default_schedule()
-        has_trackers = Tracker.has_trackers(module,request.user)
+        has_completed_trackers = Tracker.has_completed_trackers(module,request.user)
         cohort = Cohort.member_now(module,request.user)
         if cohort:
             if cohort.schedule:
                 schedule = cohort.schedule
         
         # add scheduling XML file     
-        if schedule or has_trackers:
+        if schedule or has_completed_trackers:
             file_to_download = settings.MODULE_UPLOAD_DIR +"temp/"+ str(request.user.id) + "-" + module.filename
             shutil.copy2(module.getAbsPath(), file_to_download)
             zip = zipfile.ZipFile(file_to_download,'a')
             if schedule:
                 zip.writestr(module.shortname +"/schedule.xml",schedule.to_xml_string())
-            if has_trackers:
+            if has_completed_trackers:
                 zip.writestr(module.shortname +"/tracker.xml",Tracker.to_xml_string(module,request.user))
             zip.close()
 

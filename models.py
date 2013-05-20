@@ -189,6 +189,7 @@ class Tracker(models.Model):
     data = models.TextField(blank=True)
     module = models.ForeignKey(Module,null=True, blank=True, default=None)
     type = models.CharField(max_length=10,null=True, blank=True, default=None)
+    completed = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = _('Tracker')
@@ -233,8 +234,8 @@ class Tracker(models.Model):
         return False
  
     @staticmethod
-    def has_trackers(module,user):
-        count = Tracker.objects.filter(user=user, module=module).count()
+    def has_completed_trackers(module,user):
+        count = Tracker.objects.filter(user=user, module=module,completed=True).count()
         if count > 0:
             return True
         return False
@@ -244,7 +245,7 @@ class Tracker(models.Model):
         doc = Document();
         trackerXML = doc.createElement('trackers')
         doc.appendChild(trackerXML)
-        trackers = Tracker.objects.filter(user=user, module=module).values('digest').annotate(max_tracker=Max('submitted_date'))
+        trackers = Tracker.objects.filter(user=user, module=module,completed=True).values('digest').annotate(max_tracker=Max('submitted_date'))
         for t in trackers:
             track = doc.createElement('tracker')
             track.setAttribute('digest',t['digest'])
