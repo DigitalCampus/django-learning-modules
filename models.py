@@ -200,7 +200,7 @@ class Tracker(models.Model):
     
     def is_first_tracker_today(self):
         olddate = datetime.datetime.now() + datetime.timedelta(hours=-24)
-        no_attempts_today = Tracker.objects.filter(user=self.user,digest=self.digest,submitted_date__gte=olddate).count()
+        no_attempts_today = Tracker.objects.filter(user=self.user,digest=self.digest,completed=True,submitted_date__gte=olddate).count()
         if no_attempts_today == 1:
             return True
         else:
