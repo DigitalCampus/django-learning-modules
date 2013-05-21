@@ -1,0 +1,258 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-05-21 14:05+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:22
+#, fuzzy
+msgid "Module"
+msgstr "OppiaMobile Courses"
+
+#: models.py:23
+#, fuzzy
+msgid "Modules"
+msgstr "OppiaMobile Courses"
+
+#: models.py:72
+msgid "Tag"
+msgstr ""
+
+#: models.py:73
+msgid "Tags"
+msgstr ""
+
+#: models.py:87 templates/learning_modules/schedule-form.html:7
+msgid "Schedule"
+msgstr ""
+
+#: models.py:88
+#, fuzzy
+msgid "Schedules"
+msgstr "OppiaMobile Courses"
+
+#: models.py:114
+msgid "ActivitySchedule"
+msgstr ""
+
+#: models.py:115
+msgid "ActivitySchedules"
+msgstr ""
+
+#: models.py:125
+msgid "Section"
+msgstr ""
+
+#: models.py:126
+msgid "Sections"
+msgstr ""
+
+#: models.py:154
+msgid "Activity"
+msgstr ""
+
+#: models.py:155
+msgid "Activities"
+msgstr ""
+
+#: models.py:176 models.py:177
+msgid "Media"
+msgstr ""
+
+#: models.py:195
+msgid "Tracker"
+msgstr ""
+
+#: models.py:196
+msgid "Trackers"
+msgstr ""
+
+#: models.py:265
+msgid "ModuleDownload"
+msgstr ""
+
+#: models.py:266
+msgid "ModuleDownloads"
+msgstr ""
+
+#: models.py:276
+msgid "Cohort"
+msgstr ""
+
+#: models.py:277
+msgid "Cohorts"
+msgstr ""
+
+#: models.py:322
+msgid "Participant"
+msgstr ""
+
+#: models.py:323
+msgid "Participants"
+msgstr ""
+
+#: models.py:335
+msgid "Message"
+msgstr ""
+
+#: models.py:336
+msgid "Messages"
+msgstr ""
+
+#: templates/learning_modules/home.html:47
+msgid "page_title_modules"
+msgstr "OppiaMobile Learning"
+
+#: templates/learning_modules/home.html:49
+msgid ""
+" \n"
+"<p><a href=\"http://oppia-mobile.org\">OppiaMobile</a> is our mobile "
+"learning platform to deliver learning content, multimedia and, of course, "
+"mQuizzes on your smartphone. All the content and activities can\n"
+"be accessed and used even when you don't have an internet connection "
+"available on your mobile.</p>\n"
+"<p>To get started with our courses, <a href=\"https://play.google.com/store/"
+"apps/details?id=org.digitalcampus.mobile.learning\">download the OppiaMobile "
+"app</a>. \n"
+"Or <a href=\"http://youtu.be/wHo5R_RgkG0\">watch a video</a> of OppiaMobile "
+"in action.</p>\n"
+msgstr ""
+
+#: templates/learning_modules/home.html:56
+msgid "modules_recent_activity"
+msgstr "Recent activity"
+
+#: templates/learning_modules/home.html:57
+#: templates/learning_modules/module-activity.html:50
+msgid "graph_generating"
+msgstr "Generating graph"
+
+#: templates/learning_modules/home.html:59
+#: templates/learning_modules/module-activity-detail.html:7
+#: templates/learning_modules/module-activity.html:44
+#: templates/learning_modules/module-schedules.html:7
+#: templates/learning_modules/schedule-form.html:7
+#: templates/learning_modules/schedule-saved.html:6
+#: templates/learning_modules/upload.html:4
+msgid "modules"
+msgstr "OppiaMobile Courses"
+
+#: templates/learning_modules/home.html:70
+msgid "modules_upload"
+msgstr "Upload"
+
+#: templates/learning_modules/home.html:71
+msgid "upload_module"
+msgstr "Upload new course"
+
+#: templates/learning_modules/module-activity-detail.html:12
+msgid "table_header_tracker_date"
+msgstr "Date"
+
+#: templates/learning_modules/module-activity-detail.html:13
+msgid "table_header_tracker_user"
+msgstr "User"
+
+#: templates/learning_modules/module-activity-detail.html:14
+msgid "table_header_tracker_type"
+msgstr "Type"
+
+#: templates/learning_modules/module-activity-detail.html:15
+msgid "table_header_tracker_activity"
+msgstr "Activity Title"
+
+#: templates/learning_modules/module-activity-detail.html:16
+msgid "table_header_tracker_description"
+msgstr "Extra Data"
+
+#: templates/learning_modules/module-activity-detail.html:32
+msgid "No hits yet"
+msgstr ""
+
+#: templates/learning_modules/module-schedules.html:7
+msgid "schedules"
+msgstr "Schedules"
+
+#: templates/learning_modules/module-schedules.html:15
+msgid "default"
+msgstr ""
+
+#: templates/learning_modules/module-schedules.html:22
+#, fuzzy
+msgid "No schedules"
+msgstr "Schedules"
+
+#: templates/learning_modules/module-schedules.html:26
+msgid "Add a schedule"
+msgstr "Add a schedule"
+
+#: templates/learning_modules/schedule-form.html:15
+msgid "form_field_schedule_title"
+msgstr "Title"
+
+#: templates/learning_modules/schedule-form.html:20
+msgid "form_field_schedule_default"
+msgstr "Default"
+
+#: templates/learning_modules/schedule-form.html:36
+msgid "form_field_activityschedule_start_date"
+msgstr "Start Date"
+
+#: templates/learning_modules/schedule-form.html:41
+msgid "form_field_activityschedule_end_date"
+msgstr "End Date"
+
+#: templates/learning_modules/schedule-form.html:51
+msgid "button_quiz_save"
+msgstr "Save"
+
+#: templates/learning_modules/schedule-saved.html:6
+#, fuzzy
+msgid "schedule saved"
+msgstr "Schedules"
+
+#: templates/learning_modules/schedule-saved.html:7
+#, fuzzy
+msgid ""
+"\n"
+"<p>Your schedule has been saved</p>\n"
+msgstr ""
+"\n"
+"<p>Your course was successfully uploaded</p>\n"
+
+#: templates/learning_modules/upload-success.html:4
+#: templates/learning_modules/upload.html:4
+msgid "page_title_upload_module"
+msgstr "Upload course"
+
+#: templates/learning_modules/upload-success.html:6
+#, fuzzy
+msgid ""
+"\n"
+"<p>Your course was successfully uploaded</p>\n"
+msgstr ""
+"\n"
+"<p>Your course was successfully uploaded</p>\n"
+
+#: templates/learning_modules/upload.html:10
+msgid "form_field_module_file"
+msgstr "Course file"
+
+#: templates/learning_modules/upload.html:15
+msgid "button_module_upload"
+msgstr "Upload"
+
+
