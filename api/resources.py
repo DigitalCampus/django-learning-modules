@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.conf import settings
 from tastypie import fields, bundle
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, convert_post_to_patch, dict_strip_unicode_keys
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 from tastypie import http
@@ -37,7 +37,8 @@ class TrackerResource(ModelResource):
     class Meta:
         queryset = Tracker.objects.all()
         resource_name = 'tracker'
-        allowed_methods = ['post']
+        allowed_methods = ['post','patch','put']
+        detail_allowed_methods = ['post','patch','put']
         authentication = ApiKeyAuthentication()
         authorization = Authorization() 
         serializer = PrettyJSONSerializer()
@@ -66,9 +67,10 @@ class TrackerResource(ModelResource):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
         if 'id' in bundle.data:
             del bundle.data['id']
-        bundle.obj.user = User.objects.get(pk = bundle.request.user.id)
+        bundle.obj.user = bundle.request.user
         bundle.obj.ip = bundle.request.META.get('REMOTE_ADDR','0.0.0.0')
         bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
+            
         # find out the module & activity type from the digest
         try:
             activity = Activity.objects.get(digest=bundle.data['digest'])
@@ -101,6 +103,20 @@ class TrackerResource(ModelResource):
     def dehydrate_badges(self,bundle):
         badges = Award.get_userawards(bundle.request.user)
         return badges
+    
+    def patch_list(self,request,**kwargs):
+        request = convert_post_to_patch(request)
+        deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        for data in deserialized["objects"]:
+            data = self.alter_deserialized_detail_data(request, data)
+            bundle = self.build_bundle(data=dict_strip_unicode_keys(data))
+            bundle.request.user = request.user
+            bundle.request.META['REMOTE_ADDR'] = request.META.get('REMOTE_ADDR','0.0.0.0')
+            bundle.request.META['HTTP_USER_AGENT'] = request.META.get('HTTP_USER_AGENT','unknown')
+            self.obj_create(bundle, request=request)
+        response_data = {'points': self.dehydrate_points(bundle),'badges':self.dehydrate_badges(bundle)}
+        response = HttpResponse(content=json.dumps(response_data),content_type="application/json; charset=utf-8")
+        return response
     
 class ModuleResource(ModelResource):
     class Meta:
