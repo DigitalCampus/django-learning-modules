@@ -44,7 +44,9 @@
 <h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }}</h2>
 
 {% if user.is_staff or user == module.owner %}
-	 <a href="{% url module_recent_activity_detail module.id %}">Detail</a>
+	 <a href="{% url module_recent_activity_detail module.id %}">{% trans 'module_activity_detail'%}</a>
+	 |
+	 <a href="{% url module_schedules module.id %}">{% trans 'module_manage_schedules'%}</a>
 {% endif %}
 	 
 <div id="attempts_chart_div" class="graph">{% trans 'graph_generating'%}</div>

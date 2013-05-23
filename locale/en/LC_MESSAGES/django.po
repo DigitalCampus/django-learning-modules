@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# English locale settings for learning_modules app for OppiaMobile
+# Copyright (C) 2013 Digital Campus
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Alex Little <alex@digital-campus.org>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 14:05+0200\n"
+"POT-Creation-Date: 2013-05-23 12:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: models.py:22
-#, fuzzy
 msgid "Module"
-msgstr "OppiaMobile Courses"
+msgstr ""
 
 #: models.py:23
-#, fuzzy
 msgid "Modules"
-msgstr "OppiaMobile Courses"
+msgstr ""
 
 #: models.py:72
 msgid "Tag"
@@ -40,9 +38,8 @@ msgid "Schedule"
 msgstr ""
 
 #: models.py:88
-#, fuzzy
 msgid "Schedules"
-msgstr "OppiaMobile Courses"
+msgstr ""
 
 #: models.py:114
 msgid "ActivitySchedule"
@@ -136,7 +133,7 @@ msgid "modules_recent_activity"
 msgstr "Recent activity"
 
 #: templates/learning_modules/home.html:57
-#: templates/learning_modules/module-activity.html:50
+#: templates/learning_modules/module-activity.html:52
 msgid "graph_generating"
 msgstr "Generating graph"
 
@@ -182,6 +179,14 @@ msgstr "Extra Data"
 msgid "No hits yet"
 msgstr ""
 
+#: templates/learning_modules/module-activity.html:47
+msgid "module_activity_detail"
+msgstr "Detailed activity"
+
+#: templates/learning_modules/module-activity.html:49
+msgid "module_manage_schedules"
+msgstr "Manage schedules"
+
 #: templates/learning_modules/module-schedules.html:7
 msgid "schedules"
 msgstr "Schedules"
@@ -191,9 +196,8 @@ msgid "default"
 msgstr ""
 
 #: templates/learning_modules/module-schedules.html:22
-#, fuzzy
 msgid "No schedules"
-msgstr "Schedules"
+msgstr "No schedules"
 
 #: templates/learning_modules/module-schedules.html:26
 msgid "Add a schedule"
@@ -254,5 +258,3 @@ msgstr "Course file"
 #: templates/learning_modules/upload.html:15
 msgid "button_module_upload"
 msgstr "Upload"
-
-

@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Spanish locale settings for learning_modules app for OppiaMobile
+# Copyright (C) 2013 Digital Campus
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Alex Little <alex@digital-campus.org>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 14:07+0200\n"
+"POT-Creation-Date: 2013-05-23 12:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -134,7 +134,7 @@ msgid "modules_recent_activity"
 msgstr ""
 
 #: templates/learning_modules/home.html:57
-#: templates/learning_modules/module-activity.html:50
+#: templates/learning_modules/module-activity.html:52
 msgid "graph_generating"
 msgstr ""
 
@@ -178,6 +178,14 @@ msgstr ""
 
 #: templates/learning_modules/module-activity-detail.html:32
 msgid "No hits yet"
+msgstr ""
+
+#: templates/learning_modules/module-activity.html:47
+msgid "module_activity_detail"
+msgstr ""
+
+#: templates/learning_modules/module-activity.html:49
+msgid "module_manage_schedules"
 msgstr ""
 
 #: templates/learning_modules/module-schedules.html:7
