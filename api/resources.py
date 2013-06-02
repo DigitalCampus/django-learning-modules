@@ -8,8 +8,8 @@ from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 from tastypie import http
 from tastypie.exceptions import NotFound, BadRequest, InvalidFilterError, HydrationError, InvalidSortError, ImmediateHttpResponse
-from learning_modules.models import Activity, Section, Tracker, Module, ModuleDownload, Media, Schedule, ActivitySchedule, Cohort
-from learning_modules.api.serializers import PrettyJSONSerializer, ModuleJSONSerializer
+from learning_modules.models import Activity, Section, Tracker, Module, ModuleDownload, Media, Schedule, ActivitySchedule, Cohort, Tag, ModuleTag
+from learning_modules.api.serializers import PrettyJSONSerializer, ModuleJSONSerializer, TagJSONSerializer
 from tastypie.validation import Validation
 from django.http import HttpRequest
 from django.conf.urls.defaults import url
@@ -119,6 +119,7 @@ class TrackerResource(ModelResource):
         return response
     
 class ModuleResource(ModelResource):
+    
     class Meta:
         queryset = Module.objects.all()
         resource_name = 'module'
@@ -198,7 +199,19 @@ class ModuleResource(ModelResource):
             bundle.data['schedule_uri'] = sr.get_resource_uri(schedule)
         
         return bundle
-    
+  
+class ModuleTagResource(ModelResource):
+    module = fields.ToOneField('learning_modules.api.resources.ModuleResource', 'module', full=True)
+    class Meta:
+        queryset = ModuleTag.objects.all()
+        allowed_methods = ['get','post']
+        fields = ['id','module','tag']
+        include_resource_uri = False
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+        always_return_data = True
+      
+      
 class ScheduleResource(ModelResource):
     activityschedule = fields.ToManyField('learning_modules.api.resources.ActivityScheduleResource', 'activityschedule_set', related_name='schedule', full=True, null=True)
     class Meta:
@@ -214,7 +227,47 @@ class ScheduleResource(ModelResource):
     def dehydrate(self, bundle):
         bundle.data['version'] = bundle.data['lastupdated_date'].strftime("%Y%m%d%H%M%S")
         return bundle 
+   
+class TagResource(ModelResource):
+    count = fields.IntegerField(readonly=True)
+    modules = fields.ToManyField('learning_modules.api.resources.ModuleTagResource', 'moduletag_set', related_name='tag', full=True)
+
+    class Meta:
+        queryset = Tag.objects.all()
+        resource_name = 'tag'
+        allowed_methods = ['get']
+        fields = ['id','name']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization() 
+        always_return_data = True
+        include_resource_uri = False
+        serializer = TagJSONSerializer()
     
+    def dehydrate(self,bundle):
+        
+        return bundle
+    def dehydrate_count(self,bundle):
+        count = Module.objects.filter(tag__id=bundle.obj.id).count()
+        return count
+      
+    #def override_urls(self):
+    #    return [
+    #        url(r"^(?P<resource_name>%s)/(?P<name>\w[\w/-]*)%s$" % (self._meta.resource_name, trailing_slash()), self.wrap_view('tag_detail'), name="api_tag_detail"),
+    #        ]
+    
+    def tag_detail(self, request, **kwargs):
+        self.is_authenticated(request)
+        self.throttle_check(request)
+        
+        name = kwargs.pop('name', None)
+        modules = Module.objects.filter(tag__name=name)
+        
+        for m in modules:
+            obj = ModuleResource().build_bundle(obj=m, request=request)
+            
+        response = HttpResponse(name+str(modules), content_type='')
+        return response
+             
 class ActivityScheduleResource(ModelResource):
     schedule = fields.ToOneField('learning_modules.api.resources.ScheduleResource', 'schedule', related_name='activityschedule')
     class Meta:
