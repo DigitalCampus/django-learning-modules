@@ -1,4 +1,4 @@
-# mquiz_api/resources.py
+# learning_modules/api/resources.py
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.conf import settings
@@ -233,7 +233,7 @@ class TagResource(ModelResource):
     modules = fields.ToManyField('learning_modules.api.resources.ModuleTagResource', 'moduletag_set', related_name='tag', full=True)
 
     class Meta:
-        queryset = Tag.objects.all()
+        queryset = Tag.objects.filter(modules__isnull=False).distinct().order_by("name")
         resource_name = 'tag'
         allowed_methods = ['get']
         fields = ['id','name']
