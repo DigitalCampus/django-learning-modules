@@ -198,6 +198,7 @@ class Tracker(models.Model):
     module = models.ForeignKey(Module,null=True, blank=True, default=None)
     type = models.CharField(max_length=10,null=True, blank=True, default=None)
     completed = models.BooleanField(default=False)
+    time_taken = models.IntegerField(default=0)
     
     class Meta:
         verbose_name = _('Tracker')
@@ -259,9 +260,7 @@ class Tracker(models.Model):
             track.setAttribute('digest',t['digest'])
             track.setAttribute('submitteddate',t['max_tracker'].strftime('%Y-%m-%d %H:%M:%S'))
             trackerXML.appendChild(track)
-        return doc.toxml()
-        
-        return  
+        return doc.toxml() 
      
 class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
