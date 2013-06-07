@@ -1,6 +1,6 @@
 # learning_modules/models.py
 from django.db import models
-from django.db.models import Max
+from django.db.models import Max,Sum
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -261,7 +261,32 @@ class Tracker(models.Model):
             track.setAttribute('submitteddate',t['max_tracker'].strftime('%Y-%m-%d %H:%M:%S'))
             trackerXML.appendChild(track)
         return doc.toxml() 
-     
+    
+    @staticmethod
+    def activity_views(user,type,start_date=None,end_date=None,module=None):
+        results = Tracker.objects.filter(user=user,type=type)
+        if start_date:
+            results = results.filter(submitted_date__gte=start_date)
+        if end_date:
+            results = results.filter(submitted_date__lte=end_date)
+        if module:
+            results = results.filter(module=module)
+        return results.count()
+    
+    @staticmethod
+    def activity_secs(user,type,start_date=None,end_date=None,module=None):
+        results = Tracker.objects.filter(user=user,type=type)
+        if start_date:
+            results = results.filter(submitted_date__gte=start_date)
+        if end_date:
+            results = results.filter(submitted_date__lte=end_date)
+        if module:
+            results = results.filter(module=module)
+        time = results.aggregate(total=Sum('time_taken'))
+        if time['total'] is None:
+            return 0
+        return time['total']
+         
 class ModuleDownload(models.Model):
     user = models.ForeignKey(User)
     module = models.ForeignKey(Module)

@@ -20,6 +20,7 @@ import os
 import json
 import zipfile
 import shutil
+import datetime
 from badges.models import Points, Award
 from learning_modules.signals import module_downloaded
 
@@ -251,16 +252,11 @@ class TagResource(ModelResource):
         serializer = TagJSONSerializer()
     
     def dehydrate(self,bundle):
-        
         return bundle
+    
     def dehydrate_count(self,bundle):
         count = Module.objects.filter(tag__id=bundle.obj.id).count()
         return count
-      
-    #def override_urls(self):
-    #    return [
-    #        url(r"^(?P<resource_name>%s)/(?P<name>\w[\w/-]*)%s$" % (self._meta.resource_name, trailing_slash()), self.wrap_view('tag_detail'), name="api_tag_detail"),
-    #        ]
     
     def tag_detail(self, request, **kwargs):
         self.is_authenticated(request)
@@ -291,3 +287,72 @@ class ActivityScheduleResource(ModelResource):
         bundle.data['start_date'] = bundle.data['start_date'].strftime("%Y-%m-%d %H:%M:%S")
         bundle.data['end_date'] = bundle.data['end_date'].strftime("%Y-%m-%d %H:%M:%S")
         return bundle
+    
+class ScorecardResource(ModelResource):
+    media_views = fields.IntegerField(readonly=True)
+    media_points = fields.IntegerField(readonly=True)
+    media_secs = fields.IntegerField(readonly=True)
+   
+    page_views = fields.IntegerField(readonly=True)
+    page_points = fields.IntegerField(readonly=True)
+    page_secs = fields.IntegerField(readonly=True)
+    
+    quiz_views = fields.IntegerField(readonly=True)
+    quiz_points = fields.IntegerField(readonly=True)
+    quiz_secs = fields.IntegerField(readonly=True)
+    
+    class Meta:
+        queryset = User.objects.all()
+        resource_name = 'scorecard'
+        allowed_methods = ['get']
+        fields = ['first_name', 'last_name']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization() 
+        serializer= PrettyJSONSerializer()
+        always_return_data = True
+        include_resource_uri = False
+        
+    def dehydrate_media_views(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_views(user=bundle.obj,type='media',start_date=start_date,end_date=end_date)
+    
+    def dehydrate_media_points(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Points.media_points(user=bundle.obj,start_date=start_date,end_date=end_date)
+    
+    def dehydrate_media_secs(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_secs(user=bundle.obj,type='media',start_date=start_date,end_date=end_date)
+    
+    def dehydrate_page_views(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_views(user=bundle.obj,type='page',start_date=start_date,end_date=end_date)
+    
+    def dehydrate_page_points(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Points.page_points(user=bundle.obj,start_date=start_date,end_date=end_date)
+    
+    def dehydrate_page_secs(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_secs(user=bundle.obj,type='page',start_date=start_date,end_date=end_date)
+    
+    def dehydrate_quiz_views(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_views(user=bundle.obj,type='quiz',start_date=start_date,end_date=end_date)
+    
+    def dehydrate_quiz_points(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Points.quiz_points(user=bundle.obj,start_date=start_date,end_date=end_date)
+    
+    def dehydrate_quiz_secs(self,bundle):
+        start_date = datetime.datetime.now() - datetime.timedelta(days=14)
+        end_date = datetime.datetime.now()
+        return Tracker.activity_secs(user=bundle.obj,type='quiz',start_date=start_date,end_date=end_date)
