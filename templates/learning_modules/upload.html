@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
-<h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {% trans 'page_title_upload_module' %}</h2>
+<h2><a href="{% url 'modules_home' %}">{% trans 'modules' %}</a> > {% trans 'page_title_upload_module' %}</h2>
 {% include "includes/messages.html" %}	
-<form action="{% url modules_upload %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+<form action="{% url 'modules_upload' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
     <div class="errorWrapper">{{ form.non_field_errors }}</div>
     <div class="fieldWrapper">
         <div class="fieldErrorWrapper">{{ form.module_file.errors }}</div>

@@ -1,7 +1,7 @@
 # learning_modules/urls.py
 from django.conf.urls.defaults import patterns, include, url
-from django.views.generic.simple import direct_to_template
 from learning_modules.api.resources import TrackerResource, ModuleResource, ScheduleResource, TagResource, ScorecardResource
+from django.views.generic import TemplateView
 
 from tastypie.api import Api
 v1_api = Api(api_name='v1')
@@ -15,7 +15,7 @@ urlpatterns = patterns('',
 
     url(r'^$', 'learning_modules.views.home_view', name="modules_home"),
     url(r'^upload/$', 'learning_modules.views.upload', name="modules_upload"),
-    url(r'^upload/success/$', direct_to_template, {"template": "learning_modules/upload-success.html",}, name="modules_upload_success"),
+    url(r'^upload/success/$', TemplateView.as_view(template_name="learning_modules/upload-success.html"), name="modules_upload_success"),
     url(r'^(?P<id>\d+)/$', 'learning_modules.views.recent_activity', name="module_recent_activity"),
     url(r'^(?P<id>\d+)/detail/$', 'learning_modules.views.recent_activity_detail', name="module_recent_activity_detail"),
     url(r'^(?P<module_id>\d+)/schedule/$', 'learning_modules.views.schedule', name="module_schedules"),

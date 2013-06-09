@@ -4,13 +4,13 @@
 
 {% block content %}
 
-<h2><a href="{% url modules_home %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }} > {% trans 'schedules' %}</h2>
+<h2><a href="{% url 'modules_home' %}">{% trans 'modules' %}</a> > {{ module.title|title_lang:LANGUAGE_CODE }} > {% trans 'schedules' %}</h2>
 
 {% if schedules %}
 	<ul>
 	{% for schedule in schedules %}
 		<li>
-			<a href="{% url learning_modules.views.schedule_edit schedule.module.id schedule.id %}">{{ schedule.title }}</a> 
+			<a href="{% url 'learning_modules.views.schedule_edit' schedule.module.id schedule.id %}">{{ schedule.title }}</a> 
 			{% if schedule.default %}	
 				({% trans 'default' %})
 			{% endif %} 
@@ -23,6 +23,6 @@
 	
 {% endif %}
 
-<p><a href="{% url module_schedule_add module.id %}">{% trans 'Add a schedule' %}</a></p>
+<p><a href="{% url 'module_schedule_add' module.id %}">{% trans 'Add a schedule' %}</a></p>
 
 {% endblock %}

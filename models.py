@@ -360,7 +360,7 @@ class Message(models.Model):
     date_created = models.DateTimeField(default=datetime.datetime.now)
     publish_date = models.DateTimeField(default=datetime.datetime.now)
     message = models.CharField(max_length=200)
-    link = models.URLField(verify_exists=False,max_length=255)  
+    link = models.URLField(max_length=255)  
     icon = models.CharField(max_length=200)
     
     class Meta:

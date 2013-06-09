@@ -60,7 +60,7 @@ Or <a href="http://youtu.be/wHo5R_RgkG0">watch a video</a> of OppiaMobile in act
 {% if module_set %}
 <ul>
 	{% for module in module_set %}
-	<li><a href="{% url module_recent_activity module.id %}">
+	<li><a href="{% url 'module_recent_activity' module.id %}">
 		{{ module.title|title_lang:LANGUAGE_CODE }}</a> ({{module.no_downloads}} downloads by {{module.no_distinct_downloads}} users)</li> 
 	{% endfor %}
 </ul>
@@ -68,7 +68,7 @@ Or <a href="http://youtu.be/wHo5R_RgkG0">watch a video</a> of OppiaMobile in act
 
 {% if user.is_authenticated %}
 	<h3>{% trans 'modules_upload' %}</h3>
-	<a href="{% url modules_upload %}">{% trans 'upload_module' %}</a>
+	<a href="{% url 'modules_upload' %}">{% trans 'upload_module' %}</a>
 {% endif %}
 
 {% endblock %}
