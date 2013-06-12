@@ -47,16 +47,15 @@ class TrackerResource(ModelResource):
         fields = ['points','digest','data','tracker_date','badges','module','completed']
         
     def is_valid(self, bundle, request=None):
-        digest = bundle.data['digest']
         exists = False
         try:
-            activity = Activity.objects.get(digest=bundle.data['digest'])
+            activity = Activity.objects.get(digest=bundle.obj.digest)
             exists = True
         except Activity.DoesNotExist:
             pass
         
         try:
-            media = Media.objects.get(digest=bundle.data['digest'])
+            media = Media.objects.get(digest=bundle.obj.digest)
             exists = True
         except Media.DoesNotExist:
             pass
@@ -67,21 +66,21 @@ class TrackerResource(ModelResource):
     def hydrate(self, bundle, request=None):
         # remove any id if this is submitted - otherwise it may overwrite existing tracker item
         if 'id' in bundle.data:
-            del bundle.data['id']
+            del bundle.obj.id
         bundle.obj.user = bundle.request.user
         bundle.obj.ip = bundle.request.META.get('REMOTE_ADDR','0.0.0.0')
         bundle.obj.agent = bundle.request.META.get('HTTP_USER_AGENT','unknown')
             
         # find out the module & activity type from the digest
         try:
-            activity = Activity.objects.get(digest=bundle.data['digest'])
+            activity = Activity.objects.get(digest=bundle.obj.digest)
             bundle.obj.module = activity.section.module
             bundle.obj.type = activity.type
         except Activity.DoesNotExist:
             pass
         
         try:
-            media = Media.objects.get(digest=bundle.data['digest'])
+            media = Media.objects.get(digest=bundle.obj.digest)
             bundle.obj.module = media.module
             bundle.obj.type = 'media'
         except Media.DoesNotExist:
@@ -89,14 +88,14 @@ class TrackerResource(ModelResource):
         
         # this try/except block is temporary until everyone is using client app v17
         try:
-            json_data = json.loads(bundle.data['data'])
+            json_data = json.loads(bundle.obj.data)
             if json_data['activity'] == "completed":
                 bundle.obj.completed = True
         except:
             pass
         
         try:
-            json_data = json.loads(bundle.data['data'])
+            json_data = json.loads(bundle.obj.data)
             if json_data['timetaken']:
                 bundle.obj.time_taken = json_data['timetaken']
         except:
