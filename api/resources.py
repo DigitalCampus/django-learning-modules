@@ -59,7 +59,6 @@ class TrackerResource(ModelResource):
             exists = True
         except Media.DoesNotExist:
             pass
-        
         if not exists:
             raise NotFound
             
@@ -73,14 +72,14 @@ class TrackerResource(ModelResource):
             
         # find out the module & activity type from the digest
         try:
-            activity = Activity.objects.get(digest=bundle.obj.digest)
+            activity = Activity.objects.get(digest=bundle.data['digest'])
             bundle.obj.module = activity.section.module
             bundle.obj.type = activity.type
         except Activity.DoesNotExist:
             pass
         
         try:
-            media = Media.objects.get(digest=bundle.obj.digest)
+            media = Media.objects.get(digest=bundle.data['digest'])
             bundle.obj.module = media.module
             bundle.obj.type = 'media'
         except Media.DoesNotExist:
@@ -88,14 +87,14 @@ class TrackerResource(ModelResource):
         
         # this try/except block is temporary until everyone is using client app v17
         try:
-            json_data = json.loads(bundle.obj.data)
+            json_data = json.loads(bundle.data['data'])
             if json_data['activity'] == "completed":
                 bundle.obj.completed = True
         except:
             pass
         
         try:
-            json_data = json.loads(bundle.obj.data)
+            json_data = json.loads(bundle.data['data'])
             if json_data['timetaken']:
                 bundle.obj.time_taken = json_data['timetaken']
         except:
