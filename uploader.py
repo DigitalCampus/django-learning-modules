@@ -95,6 +95,7 @@ def handle_uploaded_file(f, extract_path, request):
     for structure in doc.getElementsByTagName("structure")[:1]:
         if structure.getElementsByTagName("section").length == 0:
             messages.info(request,"There don't appear to be any activities in this upload file.")
+            module.delete()
             return False
     
         for s in structure.getElementsByTagName("section"):
