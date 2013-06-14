@@ -89,9 +89,14 @@ def handle_uploaded_file(f, extract_path, request):
         module.user = request.user
         module.filename = f.name
         module.save()
-        
+    
+     
     # add all the sections
     for structure in doc.getElementsByTagName("structure")[:1]:
+        if structure.getElementsByTagName("section").length == 0:
+            messages.info(request,"There don't appear to be any activities in this upload file.")
+            return False
+    
         for s in structure.getElementsByTagName("section"):
             temp_title = {}
             for t in s.childNodes:
