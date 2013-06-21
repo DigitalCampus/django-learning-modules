@@ -34,12 +34,12 @@ class TagJSONSerializer(Serializer):
             data['tags'] = data['objects']
             del data['objects']
             for t in data['tags']:
-                del t['modules'] 
+                del t['courses'] 
         
-        if 'modules' in data:
+        if 'courses' in data:
             new_modules = []
-            for m in data['modules']:
-                new_modules.append(m['module'])
-            del data['modules']
-            data['modules'] = new_modules
+            for m in data['courses']:
+                new_modules.append(m['course'])
+            del data['courses']
+            data['courses'] = new_modules
         return json.dumps(data, sort_keys=True, ensure_ascii=False)
